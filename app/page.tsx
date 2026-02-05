@@ -99,6 +99,38 @@ export default function Home() {
     return "Upcoming"
   }
 
+  const handleExportPDF = async () => {
+    try {
+      const res = await fetch(
+        `http://185.193.17.89:7000/api/predictions/export-pdf?season=2025&week=8`,
+        // `http://185.193.17.89:7000/api/predictions/export-pdf?season=${season}&week=${week}`,
+        {
+          method: "GET",
+        }
+      )
+  
+      if (!res.ok) {
+        throw new Error("Failed to generate PDF")
+      }
+  
+      const blob = await res.blob()
+      const url = window.URL.createObjectURL(blob)
+  
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `predictions-week-${week}.pdf`
+      document.body.appendChild(a)
+      a.click()
+  
+      a.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error(err)
+      alert("Failed to export PDF")
+    }
+  }
+  
+
   return (
     <div className=" h-[100vh] w-[100vw] pl-[15vw]">
       <div className=" h-[64px] w-full bg-white darke:bg-[#1C1C1C] border-b border-[#E4E7EC] dark:border-[#282828] px-[4%] flex items-center justify-between mb-[20px]">
@@ -119,7 +151,7 @@ export default function Home() {
             <p className=" text-[#475367] dark:text-[#979797]">Week 12 Performance Analytics</p>
           </div>
 
-          <div className=" flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
+          <div onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
             <Upload01Icon strokeWidth={1.5} />
             Export CSV
           </div>
