@@ -15,21 +15,26 @@ import {
 import WeeklyAccuracyChart from "@/components/WeeklyAccuracyChart";
 import { ChartBreakoutSquareIcon, Upload01Icon } from 'hugeicons-react';
 import { getDashboardMetrics } from '@/lib/dashboard'
+import { useRouter } from 'next/navigation';
 
 type DashboardMetrics = {
-  gamesAnalyzed: number
-  gamesDelta: number
-  topEdge: {
-    percentage: number
+  accuracy: {
+    score: string
+    trend: string
+  }
+  top_edge: {
+    value: string
     matchup: string
   }
-  modelAccuracy: {
-    value: number
-    delta: number
+  summary: {
+    games_analysed: number
+    analysed_trend: string
   }
 }
 
+
 export default function Home() {
+  const router = useRouter()
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
@@ -41,10 +46,11 @@ export default function Home() {
   useEffect(() => {
     async function fetchMetrics() {
       try {
-        const res = await fetch(`/api/analysis?season=2025&week=8`)
+        const res = await fetch(`http://185.193.17.89:7000/api/analysis?season=2025&week=8`)
         if (!res.ok) throw new Error('Failed to fetch')
 
         const data = await res.json()
+        console.log(data)
         setMetrics(data)
       } catch (err) {
         console.error(err)
@@ -57,66 +63,14 @@ export default function Home() {
     fetchMetrics()
   }, [])
 
-
-  // useEffect(() => {
-  //   const fetchGames = async () => {
-  //     try {
-  //       const res = await fetch(
-  //         "https://api.balldontlie.io/nfl/v1/games?seasons[]=2025",
-  //         {
-  //           headers: {
-  //             Authorization: process.env.NEXT_PUBLIC_BALLDONTLIE_API_KEY
-  //           }
-  //         }
-  //       )
-
-  //       const json = await res.json()
-  //       setGames(json.data)
-  //     } catch (err) {
-  //       console.error("Failed to fetch games", err)
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-
-  //   fetchGames()
-  // }, [])
-
-  //   useEffect(() => {
-  //     const fetchGames = async () => {
-  //         try {
-  //             const res = await fetch(
-  //                 "https://api.balldontlie.io/nfl/v1/games?seasons[]=2025&status=scheduled&per_page=100",
-  //                 {
-  //                     headers: {
-  //                         Authorization: process.env.NEXT_PUBLIC_BALLDONTLIE_API_KEY
-  //                     }
-  //                 }
-  //             )
-
-  //             const json = await res.json()
-
-  //             // Sort by date descending
-  //             const sortedGames = json.data.sort((a, b) => new Date(b.date) - new Date(a.date))
-
-  //             setGames(sortedGames)
-  //         } catch (err) {
-  //             console.error("Failed to fetch games", err)
-  //         } finally {
-  //             setLoading(false)
-  //         }
-  //     }
-
-  //     fetchGames()
-  // }, [])
-
   useEffect(() => {
     async function fetchGames() {
       try {
-        const res = await fetch(
-          "http://185.193.17.89:7000/api/games/featured?season=2025&week=8&page=1&limit=8&search="
-        )
+        const res = await fetch("http://185.193.17.89:7000/api/games/featured?season=2025&week=8&page=1&limit=8&search=")
+        if (!res.ok) throw new Error('Failed to fetch')
+
         const data = await res.json()
+        console.log(data)
         setGames(data.games)
       } catch (err) {
         console.error("Failed to fetch games", err)
@@ -149,7 +103,7 @@ export default function Home() {
     <div className=" h-[100vh] w-[100vw] pl-[15vw]">
       <div className=" h-[64px] w-full bg-white darke:bg-[#1C1C1C] border-b border-[#E4E7EC] dark:border-[#282828] px-[4%] flex items-center justify-between mb-[20px]">
         <select name="" id="" className=" h-[40px] min-w-[117px] bg-[#F9FAFB] dark:bg-[#232323] dark:border dark:border-[#282828] text-[#555555] dark:text-white rounded-lg">
-          <option value="">Week 12</option>
+          <option value="">Week 8</option>
         </select>
 
         <div className=" flex items-center justify-between w-[105px] h-[36px] text-[#475367] dark:text-white px-[1%] bg-[#FFFFFF] dark:bg-[#232323] border border-[#E4E7EC] dark:border-[#282828] rounded-lg">
@@ -175,8 +129,8 @@ export default function Home() {
           <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
             <div>
               <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Games Analyzed</h1>
-              <h1 className=" text-[24px] font-semibold">{games.length}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">+{metrics?.gamesDelta ?? 0} from last week</h1>
+              <h1 className=" text-[24px] font-semibold">{metrics?.summary.games_analysed}</h1>
+              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.summary.analysed_trend} from last week</h1>
             </div>
 
             <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
@@ -187,8 +141,8 @@ export default function Home() {
           <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
             <div>
               <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Top Edge Identified</h1>
-              <h1 className=" text-[24px] font-semibold">56.8%</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">MIA vs ATL</h1>
+              <h1 className=" text-[24px] font-semibold">{metrics?.top_edge.value}</h1>
+              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.top_edge.matchup}</h1>
             </div>
 
             <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
@@ -199,8 +153,8 @@ export default function Home() {
           <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
             <div>
               <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Model Accuracy</h1>
-              <h1 className=" text-[24px] font-semibold">89.8%</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">+6.4% vs Avg</h1>
+              <h1 className=" text-[24px] font-semibold">{metrics?.accuracy.score}</h1>
+              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.accuracy.trend}</h1>
             </div>
 
             <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
@@ -233,7 +187,26 @@ export default function Home() {
                 {!loading && games.map(game => (
                   <TableRow
                     key={game.game_id}
-                    className="border-b border-b-[#E4E7EC] dark:border-b-[#404040]"
+                    className="border-b border-b-[#E4E7EC] dark:border-b-[#404040] cursor-pointer"
+
+                    onClick={() => {
+                      const params = new URLSearchParams({
+                          visitor: game.visitor_team.abbreviation,
+                          home: game.home_team.abbreviation,
+                          visitor_name: game.visitor_team.full_name,
+                          home_name: game.home_team.full_name,
+                          visitor_score: game.visitor_team_score?.toString() || "0",
+                          home_score: game.home_team_score?.toString() || "0",
+                          date: game.date,
+                          status: game.status,
+                          stadium: game.venue,
+                          spread: game.spread,
+                          total: game.total,
+                          win_probability: game.win_probability
+                      }).toString()
+
+                      router.push(`/games/${game.id}?${params}`)
+                  }}
                   >
                     {/* MATCHUP */}
                     <TableCell className="font-medium min-w-[45vw] flex items-center">

@@ -46,34 +46,52 @@ const page = () => {
     //     fetchGames()
     // }, [])
 
+    // useEffect(() => {
+    //     const fetchGames = async () => {
+    //         try {
+    //             const res = await fetch(
+    //                 "https://api.balldontlie.io/nfl/v1/games?seasons[]=2025&status=scheduled&per_page=100",
+    //                 {
+    //                     headers: {
+    //                         Authorization: process.env.NEXT_PUBLIC_BALLDONTLIE_API_KEY
+    //                     }
+    //                 }
+    //             )
+
+    //             const json = await res.json()
+
+    //             // Sort by date descending
+    //             const sortedGames = json.data.sort((a, b) => new Date(b.date) - new Date(a.date))
+
+    //             setGames(sortedGames)
+    //         } catch (err) {
+    //             console.error("Failed to fetch games", err)
+    //         } finally {
+    //             setLoading(false)
+    //         }
+    //     }
+
+    //     fetchGames()
+    // }, [])
+
     useEffect(() => {
-        const fetchGames = async () => {
+        async function fetchGames() {
             try {
                 const res = await fetch(
-                    "https://api.balldontlie.io/nfl/v1/games?seasons[]=2025&status=scheduled&per_page=100",
-                    {
-                        headers: {
-                            Authorization: process.env.NEXT_PUBLIC_BALLDONTLIE_API_KEY
-                        }
-                    }
+                    "http://185.193.17.89:7000/api/games/featured?season=2025&week=8&page=1&limit=8&search="
                 )
-    
-                const json = await res.json()
-    
-                // Sort by date descending
-                const sortedGames = json.data.sort((a, b) => new Date(b.date) - new Date(a.date))
-    
-                setGames(sortedGames)
+                const data = await res.json()
+                setGames(data.games)
             } catch (err) {
                 console.error("Failed to fetch games", err)
             } finally {
                 setLoading(false)
             }
         }
-    
+
         fetchGames()
     }, [])
-    
+
 
     const getLogo = (abbr) =>
         `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr.toLowerCase()}.png`
@@ -192,8 +210,8 @@ const page = () => {
 
                                 {!loading && games.map(game => (
                                     <TableRow
-                                        key={game.id}
-                                        className="border-b border-b-[#E4E7EC] dark:border-b-[#404040]"
+                                        key={game.game_id}
+                                        className="border-b border-b-[#E4E7EC] dark:border-b-[#404040] cursor-pointer"
                                         // onClick={() => router.push(
                                         //     `/games/${game.id}?visitor=${game.visitor_team.abbreviation}&home=${game.home_team.abbreviation}&date=${game.date}&status=${game.status}`
                                         // )}
@@ -209,13 +227,16 @@ const page = () => {
                                                 date: game.date,
                                                 status: game.status,
                                                 stadium: game.venue,
+                                                spread: game.spread,
+                                                total: game.total,
+                                                win_probability: game.win_probability
                                             }).toString()
 
                                             router.push(`/games/${game.id}?${params}`)
                                         }}
                                     >
                                         {/* MATCHUP */}
-                                        <TableCell className="font-medium min-w-[25vw] flex items-center">
+                                        <TableCell className="font-medium min-w-[35vw] flex items-center">
                                             <img
                                                 src={getLogo(game.visitor_team.abbreviation)}
                                                 className="h-[40px] w-[40px] rounded-full mr-2"
@@ -238,28 +259,28 @@ const page = () => {
                                         </TableCell>
 
                                         {/* SPREAD (placeholder for now) */}
-                                        <TableCell></TableCell>
+                                        <TableCell>{game.spread}</TableCell>
 
                                         {/* TOTAL (placeholder) */}
-                                        <TableCell></TableCell>
+                                        <TableCell>{game.total}</TableCell>
 
                                         {/* WIN PROBABILITY (placeholder bar) */}
                                         <TableCell className="w-[20vw]">
                                             <div className="flex items-center">
-                                                {/* <div className="w-[15vw] h-[8px] bg-[#DADDE1] rounded-full mr-3">
-                                                    <div className="w-[50%] h-full bg-[#2FC337] rounded-full" />
-                                                </div> */}
-                                                {/* <span className="font-semibold">—</span> */}
+                                                <div className="w-[15vw] h-[8px] bg-[#DADDE1] rounded-full mr-3">
+                                                    <div style={{ width: `${Math.round(game.win_probability * 100)}%` }} className={`h-full bg-[#2FC337] rounded-full`} />
+                                                </div>
+                                                <span className="font-semibold">{Math.round(game.win_probability * 100)}%</span>
                                             </div>
                                         </TableCell>
 
                                         {/* EDGE */}
-                                        <TableCell className="text-right"></TableCell>
+                                        <TableCell className="text-right">{game.edge}</TableCell>
 
                                         {/* STATUS */}
                                         <TableCell className="text-right">
-                                            <div className={`inline-flex px-3 py-1 border rounded-md ${formatStatus(game.status) === "Upcoming" && "bg-[#4753671A] text-black border-[#E4E7EC]"} ${formatStatus(game.status) === "Completed" && "bg-[#6565FF33] text-[#6565FF] border-[#6565FF]"}`}>
-                                                {formatStatus(game.status)}
+                                            <div className={`inline-flex px-3 py-1 border capitalize rounded-md ${game.status === "Upcoming" && "bg-[#4753671A] text-black border-[#E4E7EC]"} ${game.status === "completed" && "bg-[#6565FF33] text-[#6565FF] border-[#6565FF]"}`}>
+                                                {game.status}
                                             </div>
                                         </TableCell>
                                     </TableRow>

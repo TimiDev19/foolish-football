@@ -17,6 +17,9 @@ const GameDetail = () => {
     const date = searchParams.get("date")
     const status = searchParams.get("status")
     const stadium = searchParams.get("stadium")
+    const spread = searchParams.get("spread")
+    const total = searchParams.get("total")
+    const win_probability = searchParams.get("win_probability")
 
     if (!visitor || !home) return <div>Game data not available</div>
 
@@ -100,11 +103,11 @@ const GameDetail = () => {
                         </div>
 
                         <div className=" w-full flex items-center justify-between">
-                            <h1 className=" text-[14px] text-[#475367]">Spread: <span className=" text-black font-semibold"></span></h1>
+                            <h1 className=" text-[14px] text-[#475367]">Spread: <span className=" text-black font-semibold">{spread}</span></h1>
 
-                            <h1 className=" text-[14px] text-[#475367]">Total: <span className=" text-black font-semibold"></span></h1>
+                            <h1 className=" text-[14px] text-[#475367]">Total: <span className=" text-black font-semibold">{total}</span></h1>
 
-                            <h1 className=" text-[14px] text-[#475367]">Win Probability: <span className=" text-black font-semibold"></span></h1>
+                            <h1 className=" text-[14px] text-[#475367]">Win Probability: <span className=" text-black font-semibold">{Math.round(win_probability * 100)}%</span></h1>
                         </div>
                     </div>
 
