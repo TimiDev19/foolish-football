@@ -16,6 +16,7 @@ import WeeklyAccuracyChart from "@/components/WeeklyAccuracyChart";
 import { ChartBreakoutSquareIcon, Upload01Icon } from 'hugeicons-react';
 import { getDashboardMetrics } from '@/lib/dashboard'
 import { useRouter } from 'next/navigation';
+import WeeklyTotalsBarChart from '@/components/WeeklyTotalChart';
 
 type DashboardMetrics = {
   accuracy: {
@@ -299,6 +300,13 @@ export default function Home() {
           <h1 className=" text-[18px] font-semibold mb-[8px]">Model Performance</h1>
           <div className=" w-full h-[65vh] bg-[#FFFFFF] dark:bg-[#232323] rounded-2xl flex items-center justify-center">
             <WeeklyAccuracyChart />
+          </div>
+        </div>
+
+        <div className=" w-full">
+          <h1 className=" text-[18px] font-semibold mb-[8px]">Model Performance</h1>
+          <div className=" w-full h-[65vh] bg-[#FFFFFF] dark:bg-[#232323] rounded-2xl flex items-center justify-center">
+            <WeeklyTotalsBarChart games={games} />
           </div>
         </div>
       </div>

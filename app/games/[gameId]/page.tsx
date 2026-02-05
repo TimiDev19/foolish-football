@@ -61,10 +61,10 @@ const GameDetail = () => {
                             <SearchIcon />
                             <input type="text" className=' text-[14px] w-full focus:outline-none' placeholder='Search here' />
                         </div> */}
-                        <div className=" flex items-center justify-between min-w-[120px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
+                        {/* <div className=" flex items-center justify-between min-w-[120px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
                             <Upload01Icon strokeWidth={1.5} />
                             Export CSV
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

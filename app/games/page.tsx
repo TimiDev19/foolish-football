@@ -22,6 +22,37 @@ const page = () => {
     const [games, setGames] = useState([])
     const [loading, setLoading] = useState(true)
 
+    const handleExportPDF = async () => {
+        try {
+            const res = await fetch(
+                `http://185.193.17.89:7000/api/predictions/export-pdf?season=2025&week=8`,
+                // `http://185.193.17.89:7000/api/predictions/export-pdf?season=${season}&week=${week}`,
+                {
+                    method: "GET",
+                }
+            )
+
+            if (!res.ok) {
+                throw new Error("Failed to generate PDF")
+            }
+
+            const blob = await res.blob()
+            const url = window.URL.createObjectURL(blob)
+
+            const a = document.createElement("a")
+            a.href = url
+            a.download = `predictions-week-${week}.pdf`
+            document.body.appendChild(a)
+            a.click()
+
+            a.remove()
+            window.URL.revokeObjectURL(url)
+        } catch (err) {
+            console.error(err)
+            alert("Failed to export PDF")
+        }
+    }
+
     // useEffect(() => {
     //     const fetchGames = async () => {
     //         try {
@@ -137,7 +168,7 @@ const page = () => {
                             <SearchIcon />
                             <input type="text" className=' text-[14px] w-full focus:outline-none' placeholder='Search here' />
                         </div>
-                        <div className=" flex items-center justify-between min-w-[120px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
+                        <div onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
                             <Upload01Icon strokeWidth={1.5} />
                             Export CSV
                         </div>
