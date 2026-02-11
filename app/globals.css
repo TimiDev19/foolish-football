@@ -121,3 +121,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.blog-banner{
+  background-image: url("../assets/blog-banner.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

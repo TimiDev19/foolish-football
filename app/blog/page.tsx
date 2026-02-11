@@ -1,3 +1,5 @@
+import { ArrowTurnForwardIcon } from 'hugeicons-react'
+import Link from 'next/link'
 import React from 'react'
 
 const page = () => {
@@ -19,6 +21,15 @@ const page = () => {
                     <div>
                         <h1 className=" text-[24px] font-semibold">Blog</h1>
                         <p className=" text-[#475367] dark:text-[#979797]">NFL analytics insights and predictions</p>
+                    </div>
+                </div>
+
+                <div className=' w-full flex items-center justify-center mb-[20px]'>
+                    <div className=' w-full h-[420px] blog-banner rounded-2xl flex flex-col items-start justify-center p-[10px]'>
+                        <h1 className=' text-[#FFFFFF] font-bold text-[40px] mb-[10px]'>Seahawks claim Super Bowl 60 with 29-13 win over Patriots as Bad Bunny headlines halftime show</h1>
+                        <p className=' text-[#FFFFFF] text-[16px] mb-[10px]'>The Seattle Seahawks dominated the New England Patriots, holding them scoreless through the first three quarters to win 29-13. <br /> Seattle's defense swarmed Patriots' quarterback Drake Maye all night, causing three turnovers, sacking him six times and returning one interception for a touchdown.</p>
+
+                        <Link href={""} className=' flex items-center justify-start text-[16px] text-[#2FC337]'>Read Full Article <ArrowTurnForwardIcon strokeWidth={1.5}/></Link>
                     </div>
                 </div>
             </div>

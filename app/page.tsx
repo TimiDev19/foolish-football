@@ -41,6 +41,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isPDFLoading, setIsPDFLoading] = useState(false)
+  const [dynamicWeek, setDynamicWeek] = useState("8")
 
   const season = 2025
   const week = 8
@@ -65,24 +66,50 @@ export default function Home() {
     fetchMetrics()
   }, [])
 
+  // useEffect(() => {
+  //   if (!dynamicWeek) return;
+
+  //   async function fetchGames() {
+  //     try {
+  //       const res = await fetch(`http://185.193.17.89:7000/api/games/featured?season=2025&week=9&page=1&limit=8&search=`)
+  //       if (!res.ok) throw new Error('Failed to fetch')
+
+  //       const data = await res.json()
+  //       console.log(data)
+  //       setGames(data.games)
+  //     } catch (err) {
+  //       console.error("Failed to fetch games", err)
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+
+  //   fetchGames()
+  // }, [dynamicWeek])
+
   useEffect(() => {
+    if (!dynamicWeek) return;
+    setLoading(true)
     async function fetchGames() {
       try {
-        const res = await fetch("http://185.193.17.89:7000/api/games/featured?season=2025&week=8&page=1&limit=8&search=")
-        if (!res.ok) throw new Error('Failed to fetch')
+        const res = await fetch(
+          `http://185.193.17.89:7000/api/games/featured?season=2025&week=${dynamicWeek}&page=1&limit=8&search=`
+        );
 
-        const data = await res.json()
-        console.log(data)
-        setGames(data.games)
+        if (!res.ok) throw new Error("Failed to fetch");
+
+        const data = await res.json();
+        console.log(data);
+        setGames(data.games);
       } catch (err) {
-        console.error("Failed to fetch games", err)
+        console.error("Failed to fetch games", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchGames()
-  }, [])
+    fetchGames();
+  }, [dynamicWeek]);
 
   const getLogo = (abbr) =>
     `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr.toLowerCase()}.png`
@@ -138,8 +165,9 @@ export default function Home() {
     return (
       <div className=" h-[100vh] w-[100vw] pl-[15vw]">
         <div className=" h-[64px] w-full bg-white dark:bg-[#1C1C1C] border-b border-[#E4E7EC] dark:border-[#282828] px-[4%] flex items-center justify-between mb-[20px]">
-          <select name="" id="" className=" h-[40px] min-w-[117px] bg-[#F9FAFB] dark:bg-[#232323] dark:border dark:border-[#282828] text-[#555555] dark:text-white rounded-lg">
-            <option value="">Week 8</option>
+          <select onChange={(e) => setDynamicWeek(e.target.value)} name="" id="" className=" h-[40px] min-w-[117px] bg-[#F9FAFB] dark:bg-[#232323] dark:border dark:border-[#282828] text-[#555555] dark:text-white rounded-lg">
+            <option value="8">Week 8</option>
+            <option value="9">Week 9</option>
           </select>
 
           <div className=" flex items-center justify-between w-[105px] h-[36px] text-[#475367] dark:text-white px-[1%] bg-[#FFFFFF] dark:bg-[#232323] border border-[#E4E7EC] dark:border-[#282828] rounded-lg">
@@ -152,7 +180,7 @@ export default function Home() {
           <div className=" w-full flex items-center justify-between mb-[20px]">
             <div>
               <h1 className=" text-[24px] font-semibold">Dashboard</h1>
-              <p className=" text-[#475367] dark:text-[#979797]">Week 8 Performance Analytics</p>
+              <p className=" text-[#475367] dark:text-[#979797]">Week {dynamicWeek} Performance Analytics</p>
             </div>
 
             <button disabled={loading} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
@@ -190,10 +218,10 @@ export default function Home() {
           </div>
 
           <div className=" w-full">
-          <h1 className=" text-[18px] font-semibold mb-[8px]">Model Performance</h1>
-          <div className=" w-full h-[65vh] bg-[#CDEBCF] dark:bg-[#232323] animate-pulse rounded-2xl flex items-center justify-center">
+            <h1 className=" text-[18px] font-semibold mb-[8px]">Model Performance</h1>
+            <div className=" w-full h-[65vh] bg-[#CDEBCF] dark:bg-[#232323] animate-pulse rounded-2xl flex items-center justify-center">
+            </div>
           </div>
-        </div>
         </div>
       </div>
     )
@@ -202,8 +230,9 @@ export default function Home() {
   return (
     <div className=" h-[100vh] w-[100vw] pl-[15vw]">
       <div className=" h-[64px] w-full bg-white darke:bg-[#1C1C1C] border-b border-[#E4E7EC] dark:border-[#282828] px-[4%] flex items-center justify-between mb-[20px]">
-        <select name="" id="" className=" h-[40px] min-w-[117px] bg-[#F9FAFB] dark:bg-[#232323] dark:border dark:border-[#282828] text-[#555555] dark:text-white rounded-lg">
-          <option value="">Week 8</option>
+        <select onChange={(e) => setDynamicWeek(e.target.value)} name="" id="" className=" focus:outline-none h-[40px] min-w-[117px] bg-[#F9FAFB] dark:bg-[#232323] dark:border dark:border-[#282828] text-[#555555] dark:text-white rounded-lg">
+          <option value="8">Week 8</option>
+          <option value="9">Week 9</option>
         </select>
 
         <div className=" flex items-center justify-between w-[105px] h-[36px] text-[#475367] dark:text-white px-[1%] bg-[#FFFFFF] dark:bg-[#232323] border border-[#E4E7EC] dark:border-[#282828] rounded-lg">
@@ -216,7 +245,7 @@ export default function Home() {
         <div className=" w-full flex items-center justify-between mb-[20px]">
           <div>
             <h1 className=" text-[24px] font-semibold">Dashboard</h1>
-            <p className=" text-[#475367] dark:text-[#979797]">Week 12 Performance Analytics</p>
+            <p className=" text-[#475367] dark:text-[#979797]">Week {dynamicWeek} Performance Analytics</p>
           </div>
 
           <button disabled={loading} onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
@@ -275,7 +304,7 @@ export default function Home() {
         </div>
 
         <div className=" w-full mb-[25px]">
-          <h1 className=" text-[18px] font-semibold mb-[8px]">Featured Games - Week 12</h1>
+          <h1 className=" text-[18px] font-semibold mb-[8px]">Featured Games - Week {dynamicWeek}</h1>
           <div className=" w-full h-[45vh] overflow-y-scroll bg-[#FFFFFF] dark:bg-[#1C1C1C] rounded-2xl">
             <Table>
               {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
@@ -388,12 +417,12 @@ export default function Home() {
           </div>
         </div>
 
-        <div className=" w-full">
+        {/* <div className=" w-full">
           <h1 className=" text-[18px] font-semibold mb-[8px]">Model Performance</h1>
           <div className=" w-full h-[65vh] bg-[#FFFFFF] dark:bg-[#232323] rounded-2xl flex items-center justify-center">
             <WeeklyTotalsBarChart games={games} />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )
