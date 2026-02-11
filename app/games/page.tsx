@@ -21,8 +21,12 @@ const page = () => {
 
     const [games, setGames] = useState([])
     const [loading, setLoading] = useState(true)
-
+    const [isPDFLoading, setIsPDFLoading] = useState(false)
+    const season = 2025
+    const week = 8
+    
     const handleExportPDF = async () => {
+        setIsPDFLoading(true)
         try {
             const res = await fetch(
                 `http://185.193.17.89:7000/api/predictions/export-pdf?season=2025&week=8`,
@@ -51,6 +55,7 @@ const page = () => {
             console.error(err)
             alert("Failed to export PDF")
         }
+        setIsPDFLoading(false)
     }
 
     // useEffect(() => {
@@ -168,10 +173,21 @@ const page = () => {
                             <SearchIcon />
                             <input type="text" className=' text-[14px] w-full focus:outline-none' placeholder='Search here' />
                         </div>
-                        <div onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
-                            <Upload01Icon strokeWidth={1.5} />
-                            Export CSV
-                        </div>
+                        <button disabled={loading} onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
+                            {
+                                isPDFLoading ?
+                                    (
+                                        <p>Loading...</p>
+                                    )
+                                    :
+                                    (
+                                        <div className=' w-full flex items-center justify-between'>
+                                            <Upload01Icon strokeWidth={1.5} />
+                                            Export CSV
+                                        </div>
+                                    )
+                            }
+                        </button>
                     </div>
                 </div>
 

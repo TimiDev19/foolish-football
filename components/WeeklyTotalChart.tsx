@@ -40,7 +40,7 @@ export default function WeeklyTotalsBarChart({ games }: { games: Game[] }) {
         <YAxis />
         <Tooltip />
         <Bar dataKey="total" radius={[10, 10, 0, 0]} fill="#2FC337"
-  activeBar={{ fill: "#22A861" }}/>
+          activeBar={{ fill: "#22A861" }} />
       </BarChart>
     </ResponsiveContainer>
   )

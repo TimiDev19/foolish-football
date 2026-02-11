@@ -10,7 +10,7 @@ import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { usePathname } from "next/navigation"
-import { AmericanFootballIcon, DashboardSquare01Icon, DashboardSquareSettingIcon, RankingIcon, Upload01Icon } from 'hugeicons-react'
+import { AmericanFootballIcon, DashboardSquare01Icon, DashboardSquareSettingIcon, News01Icon, RankingIcon, Upload01Icon } from 'hugeicons-react'
 
 const Sidebar = () => {
     const [isDarkModeOn, setIsDarkModeOn] = useState(true)
@@ -100,11 +100,17 @@ const Sidebar = () => {
                 </Link>
 
                 <Link
-                    href={"/"}
-                    className=' w-full h-[44px] flex items-center justify-start mb-2 hover:bg-[#CDEBCF] dark:hover:bg-[#282828] duration-500 ease-in-out group rounded-md px-[5%]'
+                    href={"/blog"}
+                    className={` w-full h-[44px] flex items-center justify-start mb-2 dark:bg-[#282828] rounded-md px-[5%] ${isActive("/blog")
+                        ? "bg-[#CDEBCF] dark:bg-[#282828]"
+                        : "hover:bg-[#CDEBCF] dark:hover:bg-[#282828] duration-500 ease-in-out group"
+                        }`}
                 >
-                    <DashboardSquare01Icon strokeWidth={1.5} className=" mr-[5px] text-[#475367] dark:text-white group-hover:text-[#2FC337]" />
-                    Model
+                    <News01Icon strokeWidth={1.5} className={` mr-[5px] ${isActive("/blog")
+                        ? "text-[#2FC337]"
+                        : "text-[#475367] duration-500 ease-in-out group"
+                        }`} />
+                    Blog
                 </Link>
             </div>
 

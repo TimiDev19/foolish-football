@@ -40,6 +40,7 @@ export default function Home() {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isPDFLoading, setIsPDFLoading] = useState(false)
 
   const season = 2025
   const week = 8
@@ -101,6 +102,7 @@ export default function Home() {
   }
 
   const handleExportPDF = async () => {
+    setIsPDFLoading(true)
     try {
       const res = await fetch(
         `http://185.193.17.89:7000/api/predictions/export-pdf?season=2025&week=8`,
@@ -109,28 +111,93 @@ export default function Home() {
           method: "GET",
         }
       )
-  
+
       if (!res.ok) {
         throw new Error("Failed to generate PDF")
       }
-  
+
       const blob = await res.blob()
       const url = window.URL.createObjectURL(blob)
-  
+
       const a = document.createElement("a")
       a.href = url
       a.download = `predictions-week-${week}.pdf`
       document.body.appendChild(a)
       a.click()
-  
+
       a.remove()
       window.URL.revokeObjectURL(url)
     } catch (err) {
       console.error(err)
       alert("Failed to export PDF")
     }
+    setIsPDFLoading(false)
   }
-  
+
+  if (loading) {
+    return (
+      <div className=" h-[100vh] w-[100vw] pl-[15vw]">
+        <div className=" h-[64px] w-full bg-white dark:bg-[#1C1C1C] border-b border-[#E4E7EC] dark:border-[#282828] px-[4%] flex items-center justify-between mb-[20px]">
+          <select name="" id="" className=" h-[40px] min-w-[117px] bg-[#F9FAFB] dark:bg-[#232323] dark:border dark:border-[#282828] text-[#555555] dark:text-white rounded-lg">
+            <option value="">Week 8</option>
+          </select>
+
+          <div className=" flex items-center justify-between w-[105px] h-[36px] text-[#475367] dark:text-white px-[1%] bg-[#FFFFFF] dark:bg-[#232323] border border-[#E4E7EC] dark:border-[#282828] rounded-lg">
+            <div className=" h-[8px] w-[8px] bg-[#2FC337] rounded-full"></div>
+            Live Data
+          </div>
+        </div>
+
+        <div className=" w-full px-[2.5%] text-black dark:text-white">
+          <div className=" w-full flex items-center justify-between mb-[20px]">
+            <div>
+              <h1 className=" text-[24px] font-semibold">Dashboard</h1>
+              <p className=" text-[#475367] dark:text-[#979797]">Week 8 Performance Analytics</p>
+            </div>
+
+            <button disabled={loading} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
+              {
+                isPDFLoading ?
+                  (
+                    <p>Loading...</p>
+                  )
+                  :
+                  (
+                    <div className=' w-full flex items-center justify-between'>
+                      <Upload01Icon strokeWidth={1.5} />
+                      Export CSV
+                    </div>
+                  )
+              }
+            </button>
+          </div>
+
+          <div className=" w-full flex items-center justify-between mb-[20px]">
+            <div className=" h-[127px] w-[32%] rounded-lg bg-[#CDEBCF] animate-pulse dark:bg-[#1C1C1C]  border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
+            </div>
+
+            <div className=" h-[127px] w-[32%] rounded-lg bg-[#CDEBCF] animate-pulse dark:bg-[#1C1C1C]  border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
+            </div>
+
+            <div className=" h-[127px] w-[32%] rounded-lg bg-[#CDEBCF] animate-pulse dark:bg-[#1C1C1C]  border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
+            </div>
+          </div>
+
+          <div className=" w-full mb-[25px]">
+            <h1 className=" text-[18px] font-semibold mb-[8px]">Featured Games - Week 8</h1>
+            <div className=" w-full h-[45vh] overflow-y-scroll bg-[#CDEBCF] animate-pulse dark:bg-[#1C1C1C] rounded-2xl">
+            </div>
+          </div>
+
+          <div className=" w-full">
+          <h1 className=" text-[18px] font-semibold mb-[8px]">Model Performance</h1>
+          <div className=" w-full h-[65vh] bg-[#CDEBCF] dark:bg-[#232323] animate-pulse rounded-2xl flex items-center justify-center">
+          </div>
+        </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className=" h-[100vh] w-[100vw] pl-[15vw]">
@@ -152,10 +219,21 @@ export default function Home() {
             <p className=" text-[#475367] dark:text-[#979797]">Week 12 Performance Analytics</p>
           </div>
 
-          <div onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
-            <Upload01Icon strokeWidth={1.5} />
-            Export CSV
-          </div>
+          <button disabled={loading} onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
+            {
+              isPDFLoading ?
+                (
+                  <p>Loading...</p>
+                )
+                :
+                (
+                  <div className=' w-full flex items-center justify-between'>
+                    <Upload01Icon strokeWidth={1.5} />
+                    Export CSV
+                  </div>
+                )
+            }
+          </button>
         </div>
 
         <div className=" w-full flex items-center justify-between mb-[20px]">
@@ -224,40 +302,40 @@ export default function Home() {
 
                     onClick={() => {
                       const params = new URLSearchParams({
-                          visitor: game.visitor_team.abbreviation,
-                          home: game.home_team.abbreviation,
-                          visitor_name: game.visitor_team.full_name,
-                          home_name: game.home_team.full_name,
-                          visitor_score: game.visitor_team_score?.toString() || "0",
-                          home_score: game.home_team_score?.toString() || "0",
-                          date: game.date,
-                          status: game.status,
-                          stadium: game.venue,
-                          spread: game.spread,
-                          total: game.total,
-                          win_probability: game.win_probability
+                        visitor: game.visitor_team.abbreviation,
+                        home: game.home_team.abbreviation,
+                        visitor_name: game.visitor_team.full_name,
+                        home_name: game.home_team.full_name,
+                        visitor_score: game.visitor_team_score?.toString() || "0",
+                        home_score: game.home_team_score?.toString() || "0",
+                        date: game.date,
+                        status: game.status,
+                        stadium: game.venue,
+                        spread: game.spread,
+                        total: game.total,
+                        win_probability: game.win_probability
                       }).toString()
 
                       router.push(`/games/${game.id}?${params}`)
-                  }}
+                    }}
                   >
                     {/* MATCHUP */}
                     <TableCell className="font-medium min-w-[45vw] flex items-center">
                       <img
-                        src={getLogo(game.visitor_team.abbreviation)}
-                        className="h-[40px] w-[40px] rounded-full mr-2"
-                      />
-                      <img
                         src={getLogo(game.home_team.abbreviation)}
                         className="h-[40px] w-[40px] rounded-full mr-3"
+                      />
+                      <img
+                        src={getLogo(game.visitor_team.abbreviation)}
+                        className="h-[40px] w-[40px] rounded-full mr-2"
                       />
 
                       <div>
                         <h1 className="font-semibold text-[14px]">
-                          {game.visitor_team.full_name} vs {game.home_team.full_name}
+                          {game.home_team.full_name} vs {game.visitor_team.full_name}
                         </h1>
                         <div className="text-[12px] text-[#777777] flex items-center">
-                          {game.visitor_team.abbreviation} vs {game.home_team.abbreviation}
+                          {game.home_team.abbreviation} vs {game.visitor_team.abbreviation}
                           <div className="h-[4px] w-[4px] bg-[#878787] rounded-full mx-[5px]" />
                           {formatTime(game.date)}
                         </div>
@@ -273,10 +351,17 @@ export default function Home() {
                     {/* WIN PROBABILITY (placeholder bar) */}
                     <TableCell className="w-[20vw]">
                       <div className="flex items-center">
+                        <div className=' mr-[3px]'>
+                          <p>{game.home_team.abbreviation}</p>
+                          <h1 className=' font-semibold'>{Math.round(game.win_probability * 100)}%</h1>
+                        </div>
                         <div className="w-[15vw] h-[8px] bg-[#DADDE1] rounded-full mr-3">
                           <div style={{ width: `${Math.round(game.win_probability * 100)}%` }} className={`h-full bg-[#2FC337] rounded-full`} />
                         </div>
-                        <span className="font-semibold">{Math.round(game.win_probability * 100)}%</span>
+                        <div className=' mr-[3px]'>
+                          <p>{game.visitor_team.abbreviation}</p>
+                          <h1 className=' font-semibold'>{100 - Math.round(game.win_probability * 100)}%</h1>
+                        </div>
                       </div>
                     </TableCell>
 
@@ -311,5 +396,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  );
+  )
 }
