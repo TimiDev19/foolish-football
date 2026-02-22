@@ -78,22 +78,25 @@ const GameDetail = () => {
                 <div className="p-6 px-[2%] w-full mx-auto bg-white dark:bg-[#1C1C1C] rounded-xl border border-[#E4E7EC] h-[248px]">
                     <div className=" w-full flex items-center justify-center h-[50%] border-b border-b-[#E4E7EC]">
                         <h1 className=" text-[24px] text-black font-semibold mr-[20px]">{home}</h1>
-                        <img
-                            src={getLogo(homeAbbr)}
-                            alt={home}
-                            className="h-[64px] w-[64px] mr-[20px]"
-                        />
+                        {homeAbbr && (
+                            <img
+                                src={getLogo(homeAbbr)}
+                                alt={home ?? "Team"}
+                                className="h-[64px] w-[64px] mr-[20px]"
+                            />)}
 
                         <div className=" flex flex-col items-center justify-center mr-[20px] text-center">
                             <h1 className=" text-[32px] text-black font-semibold">{homeScore} - {visitorScore}</h1>
                             <p className="text-center mb-4">{status}</p>
                         </div>
 
-                        <img
-                            src={getLogo(visitorAbbr)}
-                            alt={visitor}
-                            className="h-[64px] w-[64px] mr-[20px]"
-                        />
+                        {visitorAbbr && (
+                            <img
+                                src={getLogo(visitorAbbr)}
+                                alt={visitor}
+                                className="h-[64px] w-[64px] mr-[20px]"
+                            />)}
+
                         <h1 className=" text-[24px] text-black font-semibold mr-[20px]">{visitor}</h1>
                     </div>
 
