@@ -15,26 +15,11 @@ import Link from 'next/link';
 import { useRouter } from "next/navigation"
 import { Alert02Icon, Upload01Icon } from 'hugeicons-react';
 
-type Game = {
-    game_id: string;
-    visitor: string;
-    home: string;
-    visitor_name: string;
-    home_name: string;
-    visitor_score: number;
-    home_score: number;
-    date: string;
-    status: string;
-    stadium?: string;
-    spread?: number;
-    total?: number;
-    win_probability?: number;
-  };
-  
+
 const page = () => {
     const router = useRouter()
 
-    const [games, setGames] = useState<Game[]>([])
+    const [games, setGames] = useState([])
     const [loading, setLoading] = useState(true)
     const [isPDFLoading, setIsPDFLoading] = useState(false)
     const [gameError, setGameError] = useState(false)
@@ -281,34 +266,20 @@ console.log(games.length)
                                         // )}
 
                                         onClick={() => {
-                                            // const params = new URLSearchParams({
-                                            //     visitor: game.visitor_team.abbreviation,
-                                            //     home: game.home_team.abbreviation,
-                                            //     visitor_name: game.visitor_team.full_name,
-                                            //     home_name: game.home_team.full_name,
-                                            //     visitor_score: game.visitor_team_score?.toString() || "0",
-                                            //     home_score: game.home_team_score?.toString() || "0",
-                                            //     date: game.date,
-                                            //     status: game.status,
-                                            //     stadium: game.venue,
-                                            //     spread: game.spread,
-                                            //     total: game.total,
-                                            //     win_probability: game.win_probability
-                                            // }).toString()
                                             const params = new URLSearchParams({
-                                                visitor: game.visitor,
-                                                home: game.home,
-                                                visitor_name: game.visitor_name,
-                                                home_name: game.home_name,
-                                                visitor_score: String(game.visitor_score),
-                                                home_score: String(game.home_score),
+                                                visitor: game.visitor_team.abbreviation,
+                                                home: game.home_team.abbreviation,
+                                                visitor_name: game.visitor_team.full_name,
+                                                home_name: game.home_team.full_name,
+                                                visitor_score: game.visitor_team_score?.toString() || "0",
+                                                home_score: game.home_team_score?.toString() || "0",
                                                 date: game.date,
                                                 status: game.status,
-                                                stadium: String(game.stadium),
-                                                spread: String(game.spread),
-                                                total: String(game.total),
-                                                win_probability: String(game.win_probability),
-                                              })
+                                                stadium: game.venue,
+                                                spread: game.spread,
+                                                total: game.total,
+                                                win_probability: game.win_probability
+                                            }).toString()
 
                                             router.push(`/games/${game.id}?${params}`)
                                         }}
