@@ -125,7 +125,7 @@ const page = () => {
             minute: "2-digit"
         })
 
-    const formatStatus = (status) => {
+    const formatStatus = (status: string) => {
         if (status === "in_progress") return "Live"
         if (status === "Final") return "Completed"
         if (status === "Final/OT") return "Completed"
