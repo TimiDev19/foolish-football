@@ -110,7 +110,7 @@ const GameDetail = () => {
 
                             <h1 className=" text-[14px] text-[#475367]">Total: <span className=" text-black font-semibold">{total}</span></h1>
 
-                            <h1 className=" text-[14px] text-[#475367]">Win Probability (Home): <span className=" text-black font-semibold">{Math.round(win_probability * 100)}%</span></h1>
+                            <h1 className=" text-[14px] text-[#475367]">Win Probability (Home): <span className=" text-black font-semibold">{win_probability != null ? Math.round(Number(win_probability) * 100) : "N/A"}%</span></h1>
                         </div>
                     </div>
 
