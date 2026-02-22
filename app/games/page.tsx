@@ -114,10 +114,10 @@ const page = () => {
       }, [week, season, router]);
 
 
-    const getLogo = (abbr) =>
+    const getLogo = (abbr: string) =>
         `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr.toLowerCase()}.png`
 
-    const formatTime = (date) =>
+    const formatTime = (date: string) =>
         new Date(date).toLocaleString("en-US", {
             month: "short",
             day: "numeric",
