@@ -23,10 +23,10 @@ const GameDetail = () => {
 
     if (!visitor || !home) return <div>Game data not available</div>
 
-    const getLogo = (abbr) =>
+    const getLogo = (abbr: string) =>
         `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr.toLowerCase()}.png`
 
-    const formatTime = (dateStr) =>
+    const formatTime = (dateStr: string) =>
         dateStr
             ? new Date(dateStr).toLocaleString("en-US", {
                 month: "short",
