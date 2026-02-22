@@ -102,7 +102,7 @@ const GameDetail = () => {
 
                     <div className=" w-full h-[50%] flex items-center justify-between flex-col py-[0.5%]">
                         <div className=" w-full flex items-center justify-between">
-                            <div className=" text-[14px] flex items-center justify-start text-[#475367]"><CalendarMonthOutlinedIcon className=" mr-2" /> {new Date(date).toLocaleString()}</div>
+                            <div className=" text-[14px] flex items-center justify-start text-[#475367]"><CalendarMonthOutlinedIcon className=" mr-2" /> {date ? new Date(date).toLocaleString() : "Date not available"}</div>
                         </div>
 
                         <div className=" w-full flex items-center justify-between">
