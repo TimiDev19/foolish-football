@@ -17,7 +17,7 @@ const Sidebar = () => {
     const [isDarkModeOn, setIsDarkModeOn] = useState(true)
     const pathname = usePathname()
     // const isActive = (href) => pathname === href
-    const isActive = (href) => {
+    const isActive = (href: string) => {
         if (href === "/") return pathname === "/"
         return pathname.startsWith(href)
     }
