@@ -11,6 +11,7 @@ import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { usePathname } from "next/navigation"
 import { AmericanFootballIcon, DashboardSquare01Icon, DashboardSquareSettingIcon, News01Icon, RankingIcon, Upload01Icon } from 'hugeicons-react'
+import { ExitToApp } from '@mui/icons-material'
 
 const Sidebar = () => {
     const [isDarkModeOn, setIsDarkModeOn] = useState(true)
@@ -36,13 +37,13 @@ const Sidebar = () => {
                 </div>
 
                 <Link
-                    href={"/"}
-                    className={` w-full h-[44px] flex items-center justify-start mb-2 dark:bg-[#282828] rounded-md px-[5%] ${isActive("/")
+                    href={"/dashboard"}
+                    className={` w-full h-[44px] flex items-center justify-start mb-2 dark:bg-[#282828] rounded-md px-[5%] ${isActive("/dashboard")
                         ? "bg-[#CDEBCF] dark:bg-[#282828]"
                         : "hover:bg-[#CDEBCF] dark:hover:bg-[#282828] duration-500 ease-in-out group"
                         }`}
                 >
-                    <DashboardSquare01Icon strokeWidth={1.5} className={` mr-[5px] ${isActive("/")
+                    <DashboardSquare01Icon strokeWidth={1.5} className={` mr-[5px] ${isActive("/dashboard")
                         ? "text-[#2FC337]"
                         : "text-[#475367] duration-500 ease-in-out group"
                         }`} />
@@ -99,7 +100,7 @@ const Sidebar = () => {
                     Export
                 </Link>
 
-                <Link
+                {/* <Link
                     href={"/blog"}
                     className={` w-full h-[44px] flex items-center justify-start mb-2 dark:bg-[#282828] rounded-md px-[5%] ${isActive("/blog")
                         ? "bg-[#CDEBCF] dark:bg-[#282828]"
@@ -111,8 +112,10 @@ const Sidebar = () => {
                         : "text-[#475367] duration-500 ease-in-out group"
                         }`} />
                     Blog
-                </Link>
+                </Link> */}
             </div>
+
+            <Link href="/" className=' text-red-500 font-semibold text-[16px] ease-in-out duration-500 hover:text-red-200'>Logout <ExitToApp/></Link>
 
             {/* <div className=' w-[80%] flex items-center justify-between'>
                 <LightModeOutlinedIcon className={`${isDarkModeOn ? "text-[#979797]" : "text-[#2FC337]"} `}/>

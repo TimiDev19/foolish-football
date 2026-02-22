@@ -128,3 +128,17 @@
   background-size: cover;
   background-repeat: no-repeat;
 }
+
+.login{
+  background-image: url("../assets/login.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.forgot_Password{
+  background-image: url("../assets/forgotPassword.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

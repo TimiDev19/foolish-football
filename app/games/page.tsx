@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table"
 import Link from 'next/link';
 import { useRouter } from "next/navigation"
-import { Upload01Icon } from 'hugeicons-react';
+import { Alert02Icon, Upload01Icon } from 'hugeicons-react';
 
 
 const page = () => {
@@ -22,111 +22,96 @@ const page = () => {
     const [games, setGames] = useState([])
     const [loading, setLoading] = useState(true)
     const [isPDFLoading, setIsPDFLoading] = useState(false)
+    const [gameError, setGameError] = useState(false)
     const season = 2025
     const week = 8
-    
+
     const handleExportPDF = async () => {
-        setIsPDFLoading(true)
+        setIsPDFLoading(true);
+    
         try {
-            const res = await fetch(
-                `http://185.193.17.89:7000/api/predictions/export-pdf?season=2025&week=8`,
-                // `http://185.193.17.89:7000/api/predictions/export-pdf?season=${season}&week=${week}`,
-                {
-                    method: "GET",
-                }
-            )
-
-            if (!res.ok) {
-                throw new Error("Failed to generate PDF")
+          const token = localStorage.getItem("token");
+    
+          if (!token) {
+            alert("You must be logged in.");
+            return;
+          }
+    
+          const res = await fetch(
+            `http://api.foolishfootball.site/api/predictions/export-pdf?season=${season}&week=${week}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             }
-
-            const blob = await res.blob()
-            const url = window.URL.createObjectURL(blob)
-
-            const a = document.createElement("a")
-            a.href = url
-            a.download = `predictions-week-${week}.pdf`
-            document.body.appendChild(a)
-            a.click()
-
-            a.remove()
-            window.URL.revokeObjectURL(url)
+          );
+    
+          if (!res.ok) {
+            throw new Error(`Failed to generate PDF: ${res.status}`);
+          }
+    
+          const blob = await res.blob();
+    
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `predictions-week-${week}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+    
         } catch (err) {
-            console.error(err)
-            alert("Failed to export PDF")
+          console.error("PDF Export Error:", err);
+          alert("Failed to export PDF");
+        } finally {
+          setIsPDFLoading(false);
         }
-        setIsPDFLoading(false)
-    }
+      };
 
-    // useEffect(() => {
-    //     const fetchGames = async () => {
-    //         try {
-    //             const res = await fetch(
-    //                 "https://api.balldontlie.io/nfl/v1/games?seasons[]=2025&status=scheduled&per_page=100",
-    //                 {
-    //                     headers: {
-    //                         Authorization: process.env.NEXT_PUBLIC_BALLDONTLIE_API_KEY
-    //                     }
-    //                 }
-    //             )
-
-    //             const json = await res.json()
-    //             setGames(json.data)
-    //         } catch (err) {
-    //             console.error("Failed to fetch games", err)
-    //         } finally {
-    //             setLoading(false)
-    //         }
-    //     }
-
-    //     fetchGames()
-    // }, [])
-
-    // useEffect(() => {
-    //     const fetchGames = async () => {
-    //         try {
-    //             const res = await fetch(
-    //                 "https://api.balldontlie.io/nfl/v1/games?seasons[]=2025&status=scheduled&per_page=100",
-    //                 {
-    //                     headers: {
-    //                         Authorization: process.env.NEXT_PUBLIC_BALLDONTLIE_API_KEY
-    //                     }
-    //                 }
-    //             )
-
-    //             const json = await res.json()
-
-    //             // Sort by date descending
-    //             const sortedGames = json.data.sort((a, b) => new Date(b.date) - new Date(a.date))
-
-    //             setGames(sortedGames)
-    //         } catch (err) {
-    //             console.error("Failed to fetch games", err)
-    //         } finally {
-    //             setLoading(false)
-    //         }
-    //     }
-
-    //     fetchGames()
-    // }, [])
-
-    useEffect(() => {
-        async function fetchGames() {
-            try {
-                const res = await fetch(
-                    "http://185.193.17.89:7000/api/games/featured?season=2025&week=8&page=1&limit=8&search="
-                )
-                const data = await res.json()
-                setGames(data.games)
-            } catch (err) {
-                console.error("Failed to fetch games", err)
-            } finally {
-                setLoading(false)
+      useEffect(() => {
+        // Fetch featured games for the selected week
+        const fetchGames = async () => {
+          setLoading(true);          // Start loading
+        //   setDashboardError(false);  // Reset error state
+    
+          try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+              // Redirect to login if no token
+              router.push("/login");
+              return;
             }
-        }
-
-        fetchGames()
-    }, [])
+    
+            const res = await fetch(
+              `http://api.foolishfootball.site/api/games/featured?season=${season}&week=${week}&page=1&limit=20&search=`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+    
+            if (!res.ok) {
+              throw new Error(`Error fetching games: ${res.status} ${res.statusText}`);
+            }
+    
+            const data = await res.json();
+            setGames(data.games || []);
+            
+          } catch (err) {
+            console.error("Failed to fetch games", err);
+            // setDashboardError(true);
+            setGames([]); // Clear games on error
+          } finally {
+            setLoading(false); // Always stop loading
+          }
+        };
+    
+        fetchGames();
+      }, [week, season, router]);
 
 
     const getLogo = (abbr) =>
@@ -147,7 +132,7 @@ const page = () => {
         return "Upcoming"
     }
 
-
+console.log(games.length)
     return (
         <div className=" h-[100vh] w-[100vw] pl-[15vw]">
             <div className=" h-[64px] w-full bg-white darke:bg-[#1C1C1C] border-b border-[#E4E7EC] dark:border-[#282828] px-[4%] flex items-center justify-between mb-[20px]">
@@ -248,12 +233,29 @@ const page = () => {
                                     </TableCell>
                                 </TableRow>
                             </TableBody> */}
+
+
                             <TableBody>
                                 {loading && (
                                     <TableRow>
                                         <TableCell colSpan={6}>Loading games...</TableCell>
                                     </TableRow>
                                 )}
+
+                                {
+                                    gameError && <TableRow className=' w-[100vh]'>
+                                        <TableCell colSpan={6}>
+                                            <div className=' w-full h-[60vh] flex items-center justify-center'>
+                                            <div className=' min-h-[272px] min-w-[434px] bg-white rounded-2xl border border-black/10 flex flex-col items-center justify-center'>
+                                                <Alert02Icon className=' text-[#FFC300] mb-[15px]' size={50} strokeWidth={1.5} />
+                                                <h1 className=' text-black text-[18px] font-semibold mb-[10px]'>Error loading games data</h1>
+                                                <p className=' text-[16px] text-[#475367] mb-[20px]'>Failed to fetch game lines and model prediction</p>
+                                                <button onClick={() => window.location.reload()} className=' bg-[#2FC337] text-[16px] font-semibold text-white w-[90%] rounded-sm h-[40px] p-[5px] focus:outline-none cursor-pointer flex items-center justify-center'>Retry</button>
+                                            </div>
+                                        </div>
+                                        </TableCell>
+                                    </TableRow>
+                                }
 
                                 {!loading && games.map(game => (
                                     <TableRow
@@ -283,22 +285,22 @@ const page = () => {
                                         }}
                                     >
                                         {/* MATCHUP */}
-                                        <TableCell className="font-medium min-w-[35vw] flex items-center">
-                                            <img
-                                                src={getLogo(game.visitor_team.abbreviation)}
-                                                className="h-[40px] w-[40px] rounded-full mr-2"
-                                            />
+                                        <TableCell className="font-medium min-w-[30vw] flex items-center">
                                             <img
                                                 src={getLogo(game.home_team.abbreviation)}
                                                 className="h-[40px] w-[40px] rounded-full mr-3"
                                             />
+                                            <img
+                                                src={getLogo(game.visitor_team.abbreviation)}
+                                                className="h-[40px] w-[40px] rounded-full mr-2"
+                                            />
 
                                             <div>
                                                 <h1 className="font-semibold text-[14px]">
-                                                    {game.visitor_team.full_name} vs {game.home_team.full_name}
+                                                    {game.home_team.full_name} vs {game.visitor_team.full_name}
                                                 </h1>
                                                 <div className="text-[12px] text-[#777777] flex items-center">
-                                                    {game.visitor_team.abbreviation} vs {game.home_team.abbreviation}
+                                                    {game.home_team.abbreviation} vs {game.visitor_team.abbreviation}
                                                     <div className="h-[4px] w-[4px] bg-[#878787] rounded-full mx-[5px]" />
                                                     {formatTime(game.date)}
                                                 </div>
@@ -314,10 +316,17 @@ const page = () => {
                                         {/* WIN PROBABILITY (placeholder bar) */}
                                         <TableCell className="w-[20vw]">
                                             <div className="flex items-center">
+                                                <div className=' mr-[3px]'>
+                                                    <p>{game.home_team.abbreviation}</p>
+                                                    <h1 className=' font-semibold'>{Math.round(game.win_probability * 100)}%</h1>
+                                                </div>
                                                 <div className="w-[15vw] h-[8px] bg-[#DADDE1] rounded-full mr-3">
                                                     <div style={{ width: `${Math.round(game.win_probability * 100)}%` }} className={`h-full bg-[#2FC337] rounded-full`} />
                                                 </div>
-                                                <span className="font-semibold">{Math.round(game.win_probability * 100)}%</span>
+                                                <div className=' mr-[3px]'>
+                                                    <p>{game.visitor_team.abbreviation}</p>
+                                                    <h1 className=' font-semibold'>{100 - Math.round(game.win_probability * 100)}%</h1>
+                                                </div>
                                             </div>
                                         </TableCell>
 
