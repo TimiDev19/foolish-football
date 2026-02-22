@@ -15,11 +15,31 @@ import Link from 'next/link';
 import { useRouter } from "next/navigation"
 import { Alert02Icon, Upload01Icon } from 'hugeicons-react';
 
+type Team = {
+    full_name: string;
+    abbreviation: string;
+};
 
+type Game = {
+    id: string;
+    game_id: string; // or number if your API returns a number
+    home_team: Team;
+    visitor_team: Team;
+    home_team_score?: number;
+    visitor_team_score?: number;
+    date: string;
+    status: string;
+    venue?: string;
+    spread?: number;
+    total?: number;
+    win_probability?: number;
+    edge?: string;
+};
 const page = () => {
     const router = useRouter()
 
-    const [games, setGames] = useState([])
+    // const [games, setGames] = useState([])
+    const [games, setGames] = useState<Game[]>([]); 
     const [loading, setLoading] = useState(true)
     const [isPDFLoading, setIsPDFLoading] = useState(false)
     const [gameError, setGameError] = useState(false)
@@ -266,20 +286,35 @@ console.log(games.length)
                                         // )}
 
                                         onClick={() => {
+                                            // const params = new URLSearchParams({
+                                            //     visitor: game.visitor_team.abbreviation,
+                                            //     home: game.home_team.abbreviation,
+                                            //     visitor_name: game.visitor_team.full_name,
+                                            //     home_name: game.home_team.full_name,
+                                            //     visitor_score: game.visitor_team_score?.toString() || "0",
+                                            //     home_score: game.home_team_score?.toString() || "0",
+                                            //     date: game.date,
+                                            //     status: game.status,
+                                            //     stadium: game.venue,
+                                            //     spread: game.spread,
+                                            //     total: game.total,
+                                            //     win_probability: game.win_probability
+                                            // }).toString()
+
                                             const params = new URLSearchParams({
                                                 visitor: game.visitor_team.abbreviation,
                                                 home: game.home_team.abbreviation,
                                                 visitor_name: game.visitor_team.full_name,
                                                 home_name: game.home_team.full_name,
-                                                visitor_score: game.visitor_team_score?.toString() || "0",
-                                                home_score: game.home_team_score?.toString() || "0",
+                                                visitor_score: (game.visitor_team_score ?? 0).toString(),
+                                                home_score: (game.home_team_score ?? 0).toString(),
                                                 date: game.date,
                                                 status: game.status,
-                                                stadium: game.venue,
-                                                spread: game.spread,
-                                                total: game.total,
-                                                win_probability: game.win_probability
-                                            }).toString()
+                                                stadium: game.venue ?? "",
+                                                spread: (game.spread ?? 0).toString(),
+                                                total: (game.total ?? 0).toString(),
+                                                win_probability: (game.win_probability ?? 0).toString(),
+                                            });
 
                                             router.push(`/games/${game.id}?${params}`)
                                         }}
@@ -318,14 +353,14 @@ console.log(games.length)
                                             <div className="flex items-center">
                                                 <div className=' mr-[3px]'>
                                                     <p>{game.home_team.abbreviation}</p>
-                                                    <h1 className=' font-semibold'>{Math.round(game.win_probability * 100)}%</h1>
+                                                    <h1 className=' font-semibold'>{game.win_probability !== undefined ? `${Math.round(game.win_probability * 100)}%` : "N/A"}</h1>
                                                 </div>
                                                 <div className="w-[15vw] h-[8px] bg-[#DADDE1] rounded-full mr-3">
-                                                    <div style={{ width: `${Math.round(game.win_probability * 100)}%` }} className={`h-full bg-[#2FC337] rounded-full`} />
+                                                    <div style={{ width: `${Math.round((game.win_probability ?? 0) * 100)}%` }} className={`h-full bg-[#2FC337] rounded-full`} />
                                                 </div>
                                                 <div className=' mr-[3px]'>
                                                     <p>{game.visitor_team.abbreviation}</p>
-                                                    <h1 className=' font-semibold'>{100 - Math.round(game.win_probability * 100)}%</h1>
+                                                    <h1 className=' font-semibold'>{100 - Math.round((game.win_probability ?? 0) * 100)}%</h1>
                                                 </div>
                                             </div>
                                         </TableCell>
