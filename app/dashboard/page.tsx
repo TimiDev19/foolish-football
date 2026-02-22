@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import WeeklyAccuracyChart from "@/components/WeeklyAccuracyChart";
+
 import { Alert01Icon, Alert02Icon, ChartBreakoutSquareIcon, Upload01Icon, UserWarning01Icon } from 'hugeicons-react';
 import { getDashboardMetrics } from '@/lib/dashboard'
 import { useRouter } from 'next/navigation';
