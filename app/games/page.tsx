@@ -15,11 +15,37 @@ import Link from 'next/link';
 import { useRouter } from "next/navigation"
 import { Alert02Icon, Upload01Icon } from 'hugeicons-react';
 
-
+type Game = {
+    game_id: number
+    week: number
+    date: string
+    status: string
+    home_team: {
+      id: number
+      full_name: string
+      abbreviation: string
+      logo_url: string
+      conference: string
+      division: string
+    }
+    visitor_team: {
+      id: number
+      full_name: string
+      abbreviation: string
+      logo_url: string
+      conference: string
+      division: string
+    }
+    spread: number
+    total: number
+    win_probability: number
+    edge: string
+  }
+  
 const page = () => {
     const router = useRouter()
 
-    const [games, setGames] = useState([])
+    const [games, setGames] = useState<Game[]>([])
     const [loading, setLoading] = useState(true)
     const [isPDFLoading, setIsPDFLoading] = useState(false)
     const [gameError, setGameError] = useState(false)
@@ -266,20 +292,34 @@ console.log(games.length)
                                         // )}
 
                                         onClick={() => {
+                                            // const params = new URLSearchParams({
+                                            //     visitor: game.visitor_team.abbreviation,
+                                            //     home: game.home_team.abbreviation,
+                                            //     visitor_name: game.visitor_team.full_name,
+                                            //     home_name: game.home_team.full_name,
+                                            //     visitor_score: game.visitor_team_score?.toString() || "0",
+                                            //     home_score: game.home_team_score?.toString() || "0",
+                                            //     date: game.date,
+                                            //     status: game.status,
+                                            //     stadium: game.venue,
+                                            //     spread: game.spread,
+                                            //     total: game.total,
+                                            //     win_probability: game.win_probability
+                                            // }).toString()
                                             const params = new URLSearchParams({
-                                                visitor: game.visitor_team.abbreviation,
-                                                home: game.home_team.abbreviation,
-                                                visitor_name: game.visitor_team.full_name,
-                                                home_name: game.home_team.full_name,
-                                                visitor_score: game.visitor_team_score?.toString() || "0",
-                                                home_score: game.home_team_score?.toString() || "0",
+                                                visitor: game.visitor,
+                                                home: game.home,
+                                                visitor_name: game.visitor_name,
+                                                home_name: game.home_name,
+                                                visitor_score: String(game.visitor_score),
+                                                home_score: String(game.home_score),
                                                 date: game.date,
                                                 status: game.status,
-                                                stadium: game.venue,
-                                                spread: game.spread,
-                                                total: game.total,
-                                                win_probability: game.win_probability
-                                            }).toString()
+                                                stadium: String(game.stadium),
+                                                spread: String(game.spread),
+                                                total: String(game.total),
+                                                win_probability: String(game.win_probability),
+                                              })
 
                                             router.push(`/games/${game.id}?${params}`)
                                         }}
