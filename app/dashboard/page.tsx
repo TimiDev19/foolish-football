@@ -19,10 +19,75 @@ import { useRouter } from 'next/navigation';
 import WeeklyTotalsBarChart from '@/components/WeeklyTotalChart';
 import Link from 'next/link';
 import WeeklyEdgeBarChart from '@/components/WeeklyEdgeChart';
+// type DashboardMetrics = {
+//   accuracy: { score: string; trend: string }
+//   top_edge: { value: string; matchup: string }
+//   summary: { games_analysed: number; analysed_trend: string }
+// }
+
 type DashboardMetrics = {
-  accuracy: { score: string; trend: string }
-  top_edge: { value: string; matchup: string }
-  summary: { games_analysed: number; analysed_trend: string }
+  metadata: {
+    title: string
+    description: string
+    current_selection: {
+      season: number
+      week: number
+      model: string
+    }
+    pagination: {
+      weekly: {
+        total: number
+        page: number
+        limit: number
+      }
+      daily: {
+        total: number
+        limit: number
+      }
+    }
+    dictionary: {
+      accuracy_score: string
+      trend: string
+      performance_history: string
+      daily_history: string
+    }
+  }
+
+  stats: {
+    accuracy: {
+      score: string
+      trend: string
+    }
+    top_edge: {
+      value: string
+      matchup: string
+      home_logo: string
+      visitor_logo: string
+      description: string
+    }
+    summary: {
+      games_analysed: number
+      status: string
+      message: string
+    }
+  }
+
+  charts: {
+    weekly_trend: {
+      label: string
+      accuracy: number
+      total_games: number
+      status: string
+    }[]
+    daily_breakdown: {
+      date: string
+      display_label: string
+      accuracy: number
+      games_count: number
+      correct_count: number
+      status: string
+    }[]
+  }
 }
 
 const page = () => {
@@ -44,22 +109,61 @@ const page = () => {
   }, [router])
 
   // ✅ Fetch metrics
+  // useEffect(() => {
+  //   const fetchMetrics = async () => {
+  //     const token = localStorage.getItem("token");
+  //     console.log("TOKEN:", token);
+  //     setLoading(true)
+  //     try {
+  //       const token = localStorage.getItem("token")
+  //       if (!token) return router.push("/login")
+
+  //       const res = await fetch(`http://api.foolishfootball.site/api/analysis?season=2025&week=9&model=LogisticRatingV1&limit=5&page=1&daily_limit=7`, {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       })
+
+  //       if (!res.ok) throw new Error(`Failed to fetch metrics: ${res.status}`)
+  //       const data = await res.json()
+  //       setMetrics(data)
+  //     } catch (err) {
+  //       console.error("Error fetching metrics:", err)
+  //       setDashboardError(true)
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+
+  //   fetchMetrics()
+  // }, [season, dynamicWeek, router])
+
   useEffect(() => {
     const fetchMetrics = async () => {
-      const token = localStorage.getItem("token");
-      console.log("TOKEN:", token);
       setLoading(true)
+  
       try {
         const token = localStorage.getItem("token")
-        if (!token) return router.push("/login")
-
-        const res = await fetch(`http://api.foolishfootball.site/api/analysis?season=2025&week=${dynamicWeek}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-
-        if (!res.ok) throw new Error(`Failed to fetch metrics: ${res.status}`)
+  
+        if (!token) {
+          router.push("/login")
+          return
+        }
+  
+        const res = await fetch(
+          `http://api.foolishfootball.site/api/analysis?season=${season}&week=${dynamicWeek}&model=LogisticRatingV1&limit=5&page=1&daily_limit=7`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+  
+        if (!res.ok) {
+          throw new Error(`Failed to fetch metrics: ${res.status}`)
+        }
+  
         const data = await res.json()
         setMetrics(data)
+  
       } catch (err) {
         console.error("Error fetching metrics:", err)
         setDashboardError(true)
@@ -67,9 +171,47 @@ const page = () => {
         setLoading(false)
       }
     }
-
+  
     fetchMetrics()
   }, [season, dynamicWeek, router])
+
+  // useEffect(() => {
+  //   const fetchGames = async () => {
+  //     setLoading(true)
+  
+  //     try {
+  //       const token = localStorage.getItem("token")
+  //       if (!token) {
+  //         console.error("No token found")
+  //         return
+  //       }
+  
+  //       const res = await fetch(
+  //         `http://api.foolishfootball.site/api/games/featured?season=${season}&week=${week}&page=1&limit=8&search=`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       )
+  
+  //       if (!res.ok) {
+  //         throw new Error(`Error: ${res.status}`)
+  //       }
+  
+  //       const data = await res.json()
+  //       setGames(data.games || [])
+  
+  //     } catch (err) {
+  //       console.error("Failed to fetch games:", err)
+  //       setDashboardError(true)
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+  
+  //   fetchGames()
+  // }, [season, week])
 
 
 
@@ -289,12 +431,12 @@ const page = () => {
           </button>
         </div>
 
-        {/* <div className=" w-full flex items-center justify-between mb-[20px]">
+        <div className=" w-full flex items-center justify-between mb-[20px]">
           <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
             <div>
               <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Games Analyzed</h1>
-              <h1 className=" text-[24px] font-semibold">{metrics?.summary.games_analysed}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.summary.analysed_trend} from last week</h1>
+              <h1 className=" text-[24px] font-semibold">{metrics?.stats.accuracy?.score}</h1>
+              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">+{metrics?.stats.summary?.games_analysed} from last week</h1>
             </div>
 
             <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
@@ -305,8 +447,8 @@ const page = () => {
           <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
             <div>
               <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Top Edge Identified</h1>
-              <h1 className=" text-[24px] font-semibold">{metrics?.top_edge.value}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.top_edge.matchup}</h1>
+              <h1 className=" text-[24px] font-semibold">{metrics?.stats.top_edge.value}</h1>
+              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.top_edge.matchup}</h1>
             </div>
 
             <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
@@ -317,15 +459,17 @@ const page = () => {
           <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
             <div>
               <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Model Accuracy</h1>
-              <h1 className=" text-[24px] font-semibold">{metrics?.accuracy.score}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.accuracy.trend}</h1>
+              <h1 className=" text-[24px] font-semibold">{metrics?.stats.accuracy.score}</h1>
+              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.accuracy.trend}</h1>
             </div>
 
             <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
               <ChartBreakoutSquareIcon />
             </div>
           </div>
-        </div> */}
+        </div>
+
+        
 
         <div className=" w-full mb-[25px]">
           <h1 className=" text-[18px] font-semibold mb-[8px]">Featured Games - Week {dynamicWeek}</h1>
