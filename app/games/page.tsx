@@ -16,31 +16,20 @@ import { useRouter } from "next/navigation"
 import { Alert02Icon, Upload01Icon } from 'hugeicons-react';
 
 type Game = {
-    game_id: number
-    week: number
-    date: string
-    status: string
-    home_team: {
-      id: number
-      full_name: string
-      abbreviation: string
-      logo_url: string
-      conference: string
-      division: string
-    }
-    visitor_team: {
-      id: number
-      full_name: string
-      abbreviation: string
-      logo_url: string
-      conference: string
-      division: string
-    }
-    spread: number
-    total: number
-    win_probability: number
-    edge: string
-  }
+    game_id: string;
+    visitor: string;
+    home: string;
+    visitor_name: string;
+    home_name: string;
+    visitor_score: number;
+    home_score: number;
+    date: string;
+    status: string;
+    stadium?: string;
+    spread?: number;
+    total?: number;
+    win_probability?: number;
+  };
   
 const page = () => {
     const router = useRouter()
