@@ -149,7 +149,7 @@ const page = () => {
         }
   
         const res = await fetch(
-          `http://api.foolishfootball.site/api/analysis?season=${season}&week=${dynamicWeek}&model=LogisticRatingV1&limit=5&page=1&daily_limit=7`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis?season=${season}&week=${dynamicWeek}&model=LogisticRatingV1&limit=5&page=1&daily_limit=7`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -230,7 +230,7 @@ const page = () => {
         }
 
         const res = await fetch(
-          `http://api.foolishfootball.site/api/games/featured?season=${season}&week=${dynamicWeek}&page=1&limit=20&search=`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/games/featured?season=${season}&week=${dynamicWeek}&page=1&limit=20&search=`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -270,7 +270,7 @@ const page = () => {
       }
 
       const res = await fetch(
-        `http://api.foolishfootball.site/api/predictions/export-pdf?season=${season}&week=${dynamicWeek}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/predictions/export-pdf?season=${season}&week=${dynamicWeek}`,
         {
           method: "GET",
           headers: {
