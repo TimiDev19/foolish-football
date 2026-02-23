@@ -93,7 +93,7 @@ const Sidebar = () => {
                 </Link>
 
                 <Link
-                    href={"/"}
+                    href={"/dashboard"}
                     className=' w-full h-[44px] flex items-center justify-start mb-2 hover:bg-[#CDEBCF] dark:hover:bg-[#282828] duration-500 ease-in-out group rounded-md px-[5%]'
                 >
                     <Upload01Icon strokeWidth={1.5} className=" mr-[5px] text-[#475367] dark:text-white group-hover:text-[#2FC337]" />
