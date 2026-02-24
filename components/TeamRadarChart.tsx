@@ -11,11 +11,11 @@
 // } from "recharts";
 
 // const data = [
-//   { stat: "Offense", BUF: 16, KC: 14 },
-//   { stat: "Clutch", BUF: 14, KC: 22 },
-//   { stat: "Defense", BUF: 15, KC: 18 },
-//   { stat: "Rebounding", BUF: 18, KC: 17 },
-//   { stat: "Efficiency", BUF: 20, KC: 17 },
+//   { stat: "Offense", Home: 16, Visitors: 14 },
+//   { stat: "Clutch", Home: 14, Visitors: 22 },
+//   { stat: "Defense", Home: 15, Visitors: 18 },
+//   { stat: "Rebounding", Home: 18, Visitors: 17 },
+//   { stat: "Efficiency", Home: 20, Visitors: 17 },
 // ];
 
 // export default function TeamRadarChart() {
@@ -28,16 +28,16 @@
 //           <PolarRadiusAxis angle={90} domain={[0, 35]} />
 
 //           <Radar
-//             name="BUF : 112"
-//             dataKey="BUF"
+//             name="Home : 112"
+//             dataKey="Home"
 //             stroke="#22c55e"
 //             fill="#22c55e"
 //             fillOpacity={0.35}
 //           />
 
 //           <Radar
-//             name="KC : 86"
-//             dataKey="KC"
+//             name="Visitors : 86"
+//             dataKey="Visitors"
 //             stroke="#3b82f6"
 //             fill="#3b82f6"
 //             fillOpacity={0.35}
@@ -63,11 +63,11 @@ import {
 } from "recharts";
 
 const data = [
-  { stat: "Offense", BUF: 16, KC: 14 },
-  { stat: "Clutch", BUF: 14, KC: 22 },
-  { stat: "Defense", BUF: 15, KC: 18 },
-  { stat: "Rebounding", BUF: 18, KC: 17 },
-  { stat: "Efficiency", BUF: 20, KC: 17 },
+  { stat: "Offense", Home: 16, Visitors: 14 },
+  { stat: "Clutch", Home: 14, Visitors: 22 },
+  { stat: "Defense", Home: 15, Visitors: 18 },
+  { stat: "Rebounding", Home: 18, Visitors: 17 },
+  { stat: "Efficiency", Home: 20, Visitors: 17 },
 ];
 
 export default function TeamRadarChart() {
@@ -107,8 +107,8 @@ export default function TeamRadarChart() {
             />
 
             <Radar
-              name="BUF · 112"
-              dataKey="BUF"
+              name="Home · 112"
+              dataKey="Home"
               stroke="#22c55e"
               fill="#22c55e"
               fillOpacity={0.25}
@@ -116,8 +116,8 @@ export default function TeamRadarChart() {
             />
 
             <Radar
-              name="KC · 86"
-              dataKey="KC"
+              name="Visitors · 86"
+              dataKey="Visitors"
               stroke="#3b82f6"
               fill="#3b82f6"
               fillOpacity={0.25}

@@ -136,8 +136,8 @@ const GameDetail = () => {
                                 <h1>Offensive Rating</h1>
 
                                 <div className="flex items-center justify-center">
-                                    <h1 className=" mr-3">BUF : 112</h1>
-                                    <h1>KC : 86</h1>
+                                    <h1 className=" mr-3">{homeAbbr} : 112</h1>
+                                    <h1>{visitorAbbr} : 86</h1>
                                 </div>
                             </div>
 
@@ -151,8 +151,8 @@ const GameDetail = () => {
                                 <h1>Defensive Rating</h1>
 
                                 <div className="flex items-center justify-center">
-                                    <h1 className=" mr-3">BUF : 112</h1>
-                                    <h1>KC : 86</h1>
+                                    <h1 className=" mr-3">{homeAbbr} : 112</h1>
+                                    <h1>{visitorAbbr} : 86</h1>
                                 </div>
                             </div>
 
@@ -166,8 +166,8 @@ const GameDetail = () => {
                                 <h1>Pace</h1>
 
                                 <div className="flex items-center justify-center">
-                                    <h1 className=" mr-3">BUF : 112</h1>
-                                    <h1>KC : 86</h1>
+                                    <h1 className=" mr-3">{homeAbbr} : 112</h1>
+                                    <h1>{visitorAbbr} : 86</h1>
                                 </div>
                             </div>
 
@@ -181,8 +181,8 @@ const GameDetail = () => {
                                 <h1>Home Advantage</h1>
 
                                 <div className="flex items-center justify-center">
-                                    <h1 className=" mr-3">BUF : 112</h1>
-                                    <h1>KC : 86</h1>
+                                    <h1 className=" mr-3">{homeAbbr} : 112</h1>
+                                    <h1>{visitorAbbr} : 86</h1>
                                 </div>
                             </div>
 
@@ -196,8 +196,8 @@ const GameDetail = () => {
                                 <h1>Injury Impact</h1>
 
                                 <div className="flex items-center justify-center">
-                                    <h1 className=" mr-3">BUF : 112</h1>
-                                    <h1>KC : 86</h1>
+                                    <h1 className=" mr-3">{homeAbbr} : 112</h1>
+                                    <h1>{visitorAbbr} : 86</h1>
                                 </div>
                             </div>
 
