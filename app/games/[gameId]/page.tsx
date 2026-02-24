@@ -21,8 +21,8 @@ const GameDetail = () => {
     const homeAbbr = searchParams.get("home")
     const visitor = searchParams.get("visitor_name")
     const home = searchParams.get("home_name")
-    const visitorScore = searchParams.get("visitor_score")
-    const homeScore = searchParams.get("home_score")
+    const homeScore = analysis?.matchup?.home?.score ?? "-";
+    const visitorScore = analysis?.matchup?.visitor?.score ?? "-";
     const date = searchParams.get("date")
     const status = searchParams.get("status")
     const stadium = searchParams.get("stadium")
