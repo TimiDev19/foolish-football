@@ -498,23 +498,39 @@ const page = () => {
                     className="border-b border-b-[#E4E7EC] dark:border-b-[#404040] cursor-pointer"
 
                     onClick={() => {
-                      const params = new URLSearchParams({
-                        visitor: game.visitor_team.abbreviation,
-                        home: game.home_team.abbreviation,
-                        visitor_name: game.visitor_team.full_name,
-                        home_name: game.home_team.full_name,
-                        visitor_score: game.visitor_team_score?.toString() || "0",
-                        home_score: game.home_team_score?.toString() || "0",
-                        date: game.date,
-                        status: game.status,
-                        stadium: game.venue,
-                        spread: game.spread,
-                        total: game.total,
-                        win_probability: game.win_probability
-                      }).toString()
+                      // const params = new URLSearchParams({
+                      //     visitor: game.visitor_team.abbreviation,
+                      //     home: game.home_team.abbreviation,
+                      //     visitor_name: game.visitor_team.full_name,
+                      //     home_name: game.home_team.full_name,
+                      //     visitor_score: game.visitor_team_score?.toString() || "0",
+                      //     home_score: game.home_team_score?.toString() || "0",
+                      //     date: game.date,
+                      //     status: game.status,
+                      //     stadium: game.venue,
+                      //     spread: game.spread,
+                      //     total: game.total,
+                      //     win_probability: game.win_probability
+                      // }).toString()
 
-                      router.push(`/games/${game.id}?${params}`)
-                    }}
+                      const params = new URLSearchParams({
+                          gameId: game.game_id,
+                          visitor: game.visitor_team.abbreviation,
+                          home: game.home_team.abbreviation,
+                          visitor_name: game.visitor_team.full_name,
+                          home_name: game.home_team.full_name,
+                          visitor_score: (game.visitor_team_score ?? 0).toString(),
+                          home_score: (game.home_team_score ?? 0).toString(),
+                          date: game.date,
+                          status: game.status,
+                          stadium: game.venue ?? "",
+                          spread: (game.spread ?? 0).toString(),
+                          total: (game.total ?? 0).toString(),
+                          win_probability: (game.win_probability ?? 0).toString(),
+                      });
+
+                      router.push(`/games/${game.game_id}?${params}`)
+                  }}
                   >
                     {/* MATCHUP */}
                     <TableCell className="font-medium min-w-[35vw] flex items-center">
