@@ -120,38 +120,7 @@ const GameDetail = () => {
 
 
 
-                    {/* <h1 className="text-2xl font-bold mb-4 text-center">
-                        {visitor} vs {home}
-                    </h1>
 
-                    <p className="text-center mb-4">Date: {new Date(date).toLocaleString()}</p>
-                    <p className="text-center mb-4">Status: {status}</p>
-
-                    <div className="flex justify-between items-center">
-                        
-                        <div className="flex flex-col items-center">
-                            <img
-                                src={getLogo(visitorAbbr)}
-                                alt={visitor}
-                                className="h-[80px] w-[80px]"
-                            />
-                            <p className="mt-2 font-semibold">{visitor}</p>
-                            <p className="mt-1 text-xl font-bold">{visitorScore}</p>
-                        </div>
-
-                        <div className="text-2xl font-bold">-</div>
-
-                        
-                        <div className="flex flex-col items-center">
-                            <img
-                                src={getLogo(homeAbbr)}
-                                alt={home}
-                                className="h-[80px] w-[80px]"
-                            />
-                            <p className="mt-2 font-semibold">{home}</p>
-                            <p className="mt-1 text-xl font-bold">{homeScore}</p>
-                        </div>
-                    </div> */}
                 </div>
             </div>
 
@@ -241,8 +210,17 @@ const GameDetail = () => {
                     <div className=" px-[2.5%]">
                         <div className=" w-full min-h-[117px] bg-[#F9FAFB] border border-[#E4E7EC] rounded-md p-[2.5%]">
                             <h1 className=" text-[14px] text-[#475367] flex items-center justify-start font-semibold mb-[10px]"><BulbIcon strokeWidth={2} size={18} className=" mr-2" /> Model Insight</h1>
-
-                            <p className=" text-[#475367] text-[14px] font-semibold">Bills shows a significant advantage in the game tonight (+26) while Chiefs relies on their pace which is being limited by Bill’s Offensive scheme.</p>
+                            {
+                                Math.round(Number(win_probability) * 100) > 50 ?
+                                    (<div>
+                                        <p className=" text-[#475367] text-[14px] font-semibold"><b>{home}</b> shows a significant advantage in the game with a projected win probability of <b>{Math.round(Number(win_probability) * 100)}%</b> while <b>{visitor}</b> will be looking to cause an upset away from home.</p>
+                                    </div>)
+                                    :
+                                    (<div>
+                                        <p className=" text-[#475367] text-[14px] font-semibold"><b>{visitor}</b> shows a significant advantage in the game with a projected win probability of <b>{Math.round(Number(win_probability) * 100)}%</b> while <b>{home}</b> will be relying on home advantage to cause an upset.</p>
+                                    </div>)
+                            }
+                            {/* <p className=" text-[#475367] text-[14px] font-semibold">Bills shows a significant advantage in the game tonight (+26) while Chiefs relies on their pace which is being limited by Bill’s Offensive scheme.</p> */}
                         </div>
                     </div>
                 </div>
