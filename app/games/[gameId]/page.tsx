@@ -4,10 +4,19 @@ import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { BulbIcon, Upload01Icon } from "hugeicons-react";
 import TeamRadarChart from "@/components/TeamRadarChart";
+import { useEffect, useState } from "react";
+
+type Metric = {
+    category: string;
+    [key: string]: string | number; // keys are team abbreviations
+};
 
 const GameDetail = () => {
+    const [analysis, setAnalysis] = useState<any>(null)
+    const [loading, setLoading] = useState(false)
     const searchParams = useSearchParams()
 
+    const gameId = searchParams.get("gameId")
     const visitorAbbr = searchParams.get("visitor")
     const homeAbbr = searchParams.get("home")
     const visitor = searchParams.get("visitor_name")
@@ -20,6 +29,45 @@ const GameDetail = () => {
     const spread = searchParams.get("spread")
     const total = searchParams.get("total")
     const win_probability = searchParams.get("win_probability")
+
+
+
+    useEffect(() => {
+        const fetchAnalysis = async () => {
+            if (!gameId) return
+
+            const token = localStorage.getItem("token")
+            if (!token) return
+
+            try {
+                setLoading(true)
+
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis/game/${gameId}?model=LogisticRatingV1`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                )
+
+                if (!res.ok) {
+                    throw new Error("Failed to fetch analysis")
+                }
+
+                const data = await res.json()
+                setAnalysis(data)
+                console.log(data)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchAnalysis()
+    }, [gameId])
 
     if (!visitor || !home) return <div>Game data not available</div>
 
@@ -125,18 +173,18 @@ const GameDetail = () => {
             </div>
 
             <div className=" w-full flex items-center justify-between px-[2.5%]">
-                <div className=" min-h-[60vh] w-[48%] bg-[#FFFFFF] border border-[#E4E7EC] rounded-2xl">
-                    <div className=" p-[2%] border-b border-b-[#E4E7EC] mb-[10px]">
+                <div className=" min-h-fit w-[48%] flex flex-col items-center justify-center bg-[#FFFFFF] border border-[#E4E7EC] rounded-2xl">
+                    <div className=" p-[2%] border-b border-b-[#E4E7EC] mb-[10px] w-full">
                         <h1 className=" text-[24px] text-black font-semibold">Metrics</h1>
                     </div>
 
-                    <div className="px-[2.5%]">
+                    {/* <div className="px-[2.5%]">
                         <div className=" w-full mb-4">
                             <div className=" text-[14px] flex items-center justify-between mb-2">
                                 <h1>Offensive Rating</h1>
 
                                 <div className="flex items-center justify-center">
-                                    <h1 className=" mr-3">{homeAbbr} : 112</h1>
+                                    <h1 className=" mr-3">{homeAbbr} : {analysis?.home_offensive_rating ?? "-"}</h1>
                                     <h1>{visitorAbbr} : 86</h1>
                                 </div>
                             </div>
@@ -205,23 +253,65 @@ const GameDetail = () => {
                                 <div className=" w-[63%] h-full bg-[#2FC337] rounded-full"></div>
                             </div>
                         </div>
+                    </div> */}
+
+                    <div className="px-[2.5%] w-full">
+                        {loading ? (
+                            <p>Loading metrics...</p>
+                        ) : (
+                            analysis?.metrics?.map((metric: any) => {
+                                if (!homeAbbr || !visitorAbbr) return null;
+
+                                const homeValue = Number(metric[homeAbbr]);
+                                const visitorValue = Number(metric[visitorAbbr]);
+
+                                // Calculate the percentage for the bar relative to total
+                                const total = homeValue + visitorValue;
+                                const homePercent = total > 0 ? (homeValue / total) * 100 : 0;
+
+                                return (
+                                    <div key={metric.category} className="w-full mb-4">
+                                        <div className="text-[14px] flex items-center justify-between mb-2">
+                                            <h1>{metric.category}</h1>
+                                            <div className="flex items-center justify-center">
+                                                <h1 className="mr-3">{homeAbbr} : {homeValue}</h1>
+                                                <h1>{visitorAbbr} : {visitorValue}</h1>
+                                            </div>
+                                        </div>
+                                        <div className="w-full h-[12px] bg-[#1671D9] rounded-full relative">
+                                            <div
+                                                className="h-full bg-[#2FC337] rounded-full absolute left-0 top-0"
+                                                style={{ width: `${homePercent}%` }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        )}
                     </div>
 
-                    <div className=" px-[2.5%]">
-                        <div className=" w-full min-h-[117px] bg-[#F9FAFB] border border-[#E4E7EC] rounded-md p-[2.5%]">
-                            <h1 className=" text-[14px] text-[#475367] flex items-center justify-start font-semibold mb-[10px]"><BulbIcon strokeWidth={2} size={18} className=" mr-2" /> Model Insight</h1>
-                            {
-                                Math.round(Number(win_probability) * 100) > 50 ?
-                                    (<div>
-                                        <p className=" text-[#475367] text-[14px] font-semibold"><b>{home}</b> shows a significant advantage in the game with a projected win probability of <b>{Math.round(Number(win_probability) * 100)}%</b> while <b>{visitor}</b> will be looking to cause an upset away from home.</p>
-                                    </div>)
-                                    :
-                                    (<div>
-                                        <p className=" text-[#475367] text-[14px] font-semibold"><b>{visitor}</b> shows a significant advantage in the game with a projected win probability of <b>{Math.round(Number(win_probability) * 100)}%</b> while <b>{home}</b> will be relying on home advantage to cause an upset.</p>
-                                    </div>)
-                            }
-                            {/* <p className=" text-[#475367] text-[14px] font-semibold">Bills shows a significant advantage in the game tonight (+26) while Chiefs relies on their pace which is being limited by Bill’s Offensive scheme.</p> */}
-                        </div>
+                    <div className=" px-[2.5%] w-full mb-[10px]">
+
+                        {analysis?.model_insight && (
+                            <div className="w-full min-h-[117px] bg-[#F9FAFB] border border-[#E4E7EC] rounded-md p-[2.5%]">
+                                <h1 className="text-[14px] text-[#475367] flex items-center justify-start font-semibold mb-[10px]">
+                                    <BulbIcon strokeWidth={2} size={18} className="mr-2" />
+                                    Model Insight
+                                </h1>
+
+                                <p className="text-[#475367] text-[14px] font-semibold">
+                                    {analysis.model_insight.description}
+                                </p>
+
+                                <p className="text-[#475367] text-[14px] font-semibold mt-2">
+                                    Win Probability ({analysis.model_insight.winner_abbr}):
+                                    <span className="font-bold ml-1">
+                                        {Math.round(analysis.model_insight.win_probability)}%
+                                    </span>
+                                </p>
+                            </div>
+                        )}
+                        {/* <p className=" text-[#475367] text-[14px] font-semibold">Bills shows a significant advantage in the game tonight (+26) while Chiefs relies on their pace which is being limited by Bill’s Offensive scheme.</p> */}
                     </div>
                 </div>
                 <div className=" min-h-[60vh] w-[48%] bg-[#FFFFFF] border border-[#E4E7EC] rounded-2xl">
@@ -229,7 +319,11 @@ const GameDetail = () => {
                         <h1 className=" text-[24px] text-black font-semibold">Power Rating</h1>
                     </div>
                     <div className=" flex items-center justify-center h-full w-full px-[2.5%]">
-                        <TeamRadarChart />
+                        <TeamRadarChart
+                            metrics={analysis?.metrics ?? []}
+                            homeAbbr={homeAbbr!}
+                            visitorAbbr={visitorAbbr!}
+                        />
                     </div>
                 </div>
             </div>

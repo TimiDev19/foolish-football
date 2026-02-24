@@ -302,6 +302,7 @@ console.log(games.length)
                                             // }).toString()
 
                                             const params = new URLSearchParams({
+                                                gameId: game.game_id,
                                                 visitor: game.visitor_team.abbreviation,
                                                 home: game.home_team.abbreviation,
                                                 visitor_name: game.visitor_team.full_name,
@@ -316,7 +317,7 @@ console.log(games.length)
                                                 win_probability: (game.win_probability ?? 0).toString(),
                                             });
 
-                                            router.push(`/games/${game.id}?${params}`)
+                                            router.push(`/games/${game.game_id}?${params}`)
                                         }}
                                     >
                                         {/* MATCHUP */}
