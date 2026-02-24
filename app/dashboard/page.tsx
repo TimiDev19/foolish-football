@@ -230,7 +230,7 @@ const page = () => {
         }
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/games/featured?season=${season}&week=${dynamicWeek}&page=1&limit=20&search=`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/games/featured?season=${season}&week=${dynamicWeek}&page=1&limit=30&search=`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -435,8 +435,8 @@ const page = () => {
           <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
             <div>
               <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Games Analyzed</h1>
-              <h1 className=" text-[24px] font-semibold">{metrics?.stats.accuracy?.score}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">+{metrics?.stats.summary?.games_analysed} from last week</h1>
+              <h1 className=" text-[24px] font-semibold">{metrics?.stats.summary?.games_analysed}</h1>
+              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.summary?.games_analysed} games have been analysed</h1>
             </div>
 
             <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
