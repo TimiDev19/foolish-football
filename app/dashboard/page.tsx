@@ -19,6 +19,9 @@ import { useRouter } from 'next/navigation';
 import WeeklyTotalsBarChart from '@/components/WeeklyTotalChart';
 import Link from 'next/link';
 import WeeklyEdgeBarChart from '@/components/WeeklyEdgeChart';
+import { FadeInFromTop } from '@/components/FadeInFromTop';
+import { FadeInFromLeft } from '@/components/FadeInFromLeft';
+import { FadeInFromBottom } from '@/components/FadeInFromBottom';
 // type DashboardMetrics = {
 //   accuracy: { score: string; trend: string }
 //   top_edge: { value: string; matchup: string }
@@ -139,15 +142,15 @@ const page = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       setLoading(true)
-  
+
       try {
         const token = localStorage.getItem("token")
-  
+
         if (!token) {
           router.push("/login")
           return
         }
-  
+
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis?season=${season}&week=${dynamicWeek}&model=LogisticRatingV1&limit=5&page=1&daily_limit=7`,
           {
@@ -156,14 +159,14 @@ const page = () => {
             },
           }
         )
-  
+
         if (!res.ok) {
           throw new Error(`Failed to fetch metrics: ${res.status}`)
         }
-  
+
         const data = await res.json()
         setMetrics(data)
-  
+
       } catch (err) {
         console.error("Error fetching metrics:", err)
         setDashboardError(true)
@@ -171,21 +174,21 @@ const page = () => {
         setLoading(false)
       }
     }
-  
+
     fetchMetrics()
   }, [season, dynamicWeek, router])
 
   // useEffect(() => {
   //   const fetchGames = async () => {
   //     setLoading(true)
-  
+
   //     try {
   //       const token = localStorage.getItem("token")
   //       if (!token) {
   //         console.error("No token found")
   //         return
   //       }
-  
+
   //       const res = await fetch(
   //         `http://api.foolishfootball.site/api/games/featured?season=${season}&week=${week}&page=1&limit=8&search=`,
   //         {
@@ -194,14 +197,14 @@ const page = () => {
   //           },
   //         }
   //       )
-  
+
   //       if (!res.ok) {
   //         throw new Error(`Error: ${res.status}`)
   //       }
-  
+
   //       const data = await res.json()
   //       setGames(data.games || [])
-  
+
   //     } catch (err) {
   //       console.error("Failed to fetch games:", err)
   //       setDashboardError(true)
@@ -209,7 +212,7 @@ const page = () => {
   //       setLoading(false)
   //     }
   //   }
-  
+
   //   fetchGames()
   // }, [season, week])
 
@@ -408,112 +411,116 @@ const page = () => {
       </div>
 
       <div className=" w-full px-[2.5%] text-black dark:text-white">
-        <div className=" w-full flex items-center justify-between mb-[20px]">
-          <div>
-            <h1 className=" text-[24px] font-semibold">Dashboard</h1>
-            <p className=" text-[#475367] dark:text-[#979797]">Week {dynamicWeek} Performance Analytics</p>
-          </div>
-
-          <button disabled={loading} onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
-            {
-              isPDFLoading ?
-                (
-                  <p>Loading...</p>
-                )
-                :
-                (
-                  <div className=' w-full flex items-center justify-between'>
-                    <Upload01Icon strokeWidth={1.5} />
-                    Export CSV
-                  </div>
-                )
-            }
-          </button>
-        </div>
-
-        <div className=" w-full flex items-center justify-between mb-[20px]">
-          <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
+        <FadeInFromTop>
+          <div className=" w-full flex items-center justify-between mb-[20px]">
             <div>
-              <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Games Analyzed</h1>
-              <h1 className=" text-[24px] font-semibold">{metrics?.stats.summary?.games_analysed}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.summary?.games_analysed} games have been analysed</h1>
+              <h1 className=" text-[24px] font-semibold">Dashboard</h1>
+              <p className=" text-[#475367] dark:text-[#979797]">Week {dynamicWeek} Performance Analytics</p>
             </div>
 
-            <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
-              <ChartBreakoutSquareIcon />
-            </div>
+            <button disabled={loading} onClick={handleExportPDF} className=" cursor-pointer ease-in-out duration-500 hover:bg-transparent hover:text-[#2FC337] flex items-center justify-between min-w-[138px] h-[40px] text-white px-[1%] bg-[#2FC337] dark:bg-[#232323] dark:border border-[#282828] rounded-lg">
+              {
+                isPDFLoading ?
+                  (
+                    <p>Loading...</p>
+                  )
+                  :
+                  (
+                    <div className=' w-full flex items-center justify-between'>
+                      <Upload01Icon strokeWidth={1.5} />
+                      Export CSV
+                    </div>
+                  )
+              }
+            </button>
           </div>
 
-          <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
-            <div>
-              <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Top Edge Identified</h1>
-              <h1 className=" text-[24px] font-semibold">{metrics?.stats.top_edge.value}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.top_edge.matchup}</h1>
+          <div className=" w-full flex items-center justify-between mb-[20px]">
+            <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
+              <div>
+                <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Games Analyzed</h1>
+                <h1 className=" text-[24px] font-semibold">{metrics?.stats.summary?.games_analysed}</h1>
+                <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.summary?.games_analysed} games have been analysed</h1>
+              </div>
+
+              <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
+                <ChartBreakoutSquareIcon />
+              </div>
             </div>
 
-            <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
-              <ChartBreakoutSquareIcon />
+            <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
+              <div>
+                <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Top Edge Identified</h1>
+                <h1 className=" text-[24px] font-semibold">{metrics?.stats.top_edge.value}</h1>
+                <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.top_edge.matchup}</h1>
+              </div>
+
+              <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
+                <ChartBreakoutSquareIcon />
+              </div>
+            </div>
+
+            <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
+              <div>
+                <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Model Accuracy</h1>
+                <h1 className=" text-[24px] font-semibold">{metrics?.stats.accuracy.score}</h1>
+                <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.accuracy.trend}</h1>
+              </div>
+
+              <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
+                <ChartBreakoutSquareIcon />
+              </div>
             </div>
           </div>
+        </FadeInFromTop>
 
-          <div className=" h-[127px] w-[32%] rounded-lg bg-white dark:bg-[#1C1C1C] border border-[#E4E7EC] dark:border-[#282828] p-[2%] flex items-center justify-between">
-            <div>
-              <h1 className=" text-[14px] text-[#475367] dark:text-[#979797]">Model Accuracy</h1>
-              <h1 className=" text-[24px] font-semibold">{metrics?.stats.accuracy.score}</h1>
-              <h1 className=" text-[14px] text-[#0F973D] dark:text-[#979797]">{metrics?.stats.accuracy.trend}</h1>
-            </div>
 
-            <div className=" text-[#2FC337] dark:text-[#979797] bg-[#CDEBCF] dark:bg-[#232323] h-[52px] w-[52px] flex items-center justify-center rounded-lg">
-              <ChartBreakoutSquareIcon />
-            </div>
-          </div>
-        </div>
 
-        
 
-        <div className=" w-full mb-[25px]">
-          <h1 className=" text-[18px] font-semibold mb-[8px]">Featured Games - Week {dynamicWeek}</h1>
-          <div className=" w-full h-[45vh] overflow-y-scroll bg-[#FFFFFF] dark:bg-[#1C1C1C] rounded-2xl">
-            <Table>
-              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px] text-[#475367] dark:text-[#878787]">Matchup</TableHead>
-                  <TableHead className=" text-[#475367] dark:text-[#878787]">Spread</TableHead>
-                  <TableHead className=" text-[#475367] dark:text-[#878787]">Total</TableHead>
-                  <TableHead className=" text-[#475367] dark:text-[#878787]">Win Probability</TableHead>
-                  <TableHead className=" text-[#475367] dark:text-[#878787] text-right">Edge</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading && (
+        <FadeInFromLeft>
+          <div className=" w-full mb-[25px]">
+            <h1 className=" text-[18px] font-semibold mb-[8px]">Featured Games - Week {dynamicWeek}</h1>
+            <div className=" w-full h-[45vh] overflow-y-scroll bg-[#FFFFFF] dark:bg-[#1C1C1C] rounded-2xl">
+              <Table>
+                {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={6}>Loading games...</TableCell>
+                    <TableHead className="w-[100px] text-[#475367] dark:text-[#878787]">Matchup</TableHead>
+                    <TableHead className=" text-[#475367] dark:text-[#878787]">Spread</TableHead>
+                    <TableHead className=" text-[#475367] dark:text-[#878787]">Total</TableHead>
+                    <TableHead className=" text-[#475367] dark:text-[#878787]">Win Probability</TableHead>
+                    <TableHead className=" text-[#475367] dark:text-[#878787] text-right">Edge</TableHead>
                   </TableRow>
-                )}
+                </TableHeader>
+                <TableBody>
+                  {loading && (
+                    <TableRow>
+                      <TableCell colSpan={6}>Loading games...</TableCell>
+                    </TableRow>
+                  )}
 
-                {!loading && games.map(game => (
-                  <TableRow
-                    key={game.game_id}
-                    className="border-b border-b-[#E4E7EC] dark:border-b-[#404040] cursor-pointer"
+                  {!loading && games.map(game => (
+                    <TableRow
+                      key={game.game_id}
+                      className="border-b border-b-[#E4E7EC] dark:border-b-[#404040] cursor-pointer"
 
-                    onClick={() => {
-                      // const params = new URLSearchParams({
-                      //     visitor: game.visitor_team.abbreviation,
-                      //     home: game.home_team.abbreviation,
-                      //     visitor_name: game.visitor_team.full_name,
-                      //     home_name: game.home_team.full_name,
-                      //     visitor_score: game.visitor_team_score?.toString() || "0",
-                      //     home_score: game.home_team_score?.toString() || "0",
-                      //     date: game.date,
-                      //     status: game.status,
-                      //     stadium: game.venue,
-                      //     spread: game.spread,
-                      //     total: game.total,
-                      //     win_probability: game.win_probability
-                      // }).toString()
+                      onClick={() => {
+                        // const params = new URLSearchParams({
+                        //     visitor: game.visitor_team.abbreviation,
+                        //     home: game.home_team.abbreviation,
+                        //     visitor_name: game.visitor_team.full_name,
+                        //     home_name: game.home_team.full_name,
+                        //     visitor_score: game.visitor_team_score?.toString() || "0",
+                        //     home_score: game.home_team_score?.toString() || "0",
+                        //     date: game.date,
+                        //     status: game.status,
+                        //     stadium: game.venue,
+                        //     spread: game.spread,
+                        //     total: game.total,
+                        //     win_probability: game.win_probability
+                        // }).toString()
 
-                      const params = new URLSearchParams({
+                        const params = new URLSearchParams({
                           gameId: game.game_id,
                           visitor: game.visitor_team.abbreviation,
                           home: game.home_team.abbreviation,
@@ -527,72 +534,73 @@ const page = () => {
                           spread: (game.spread ?? 0).toString(),
                           total: (game.total ?? 0).toString(),
                           win_probability: (game.win_probability ?? 0).toString(),
-                      });
+                        });
 
-                      router.push(`/games/${game.game_id}?${params}`)
-                  }}
-                  >
-                    {/* MATCHUP */}
-                    <TableCell className="font-medium min-w-[35vw] flex items-center">
-                      <img
-                        src={getLogo(game.home_team.abbreviation)}
-                        className="h-[40px] w-[40px] rounded-full mr-3"
-                      />
-                      <img
-                        src={getLogo(game.visitor_team.abbreviation)}
-                        className="h-[40px] w-[40px] rounded-full mr-2"
-                      />
+                        router.push(`/games/${game.game_id}?${params}`)
+                      }}
+                    >
+                      {/* MATCHUP */}
+                      <TableCell className="font-medium min-w-[35vw] flex items-center">
+                        <img
+                          src={getLogo(game.home_team.abbreviation)}
+                          className="h-[40px] w-[40px] rounded-full mr-3"
+                        />
+                        <img
+                          src={getLogo(game.visitor_team.abbreviation)}
+                          className="h-[40px] w-[40px] rounded-full mr-2"
+                        />
 
-                      <div>
-                        <h1 className="font-semibold text-[14px]">
-                          {game.home_team.full_name} vs {game.visitor_team.full_name}
-                        </h1>
-                        <div className="text-[12px] text-[#777777] flex items-center">
-                          {game.home_team.abbreviation} vs {game.visitor_team.abbreviation}
-                          <div className="h-[4px] w-[4px] bg-[#878787] rounded-full mx-[5px]" />
-                          {formatTime(game.date)}
+                        <div>
+                          <h1 className="font-semibold text-[14px]">
+                            {game.home_team.full_name} vs {game.visitor_team.full_name}
+                          </h1>
+                          <div className="text-[12px] text-[#777777] flex items-center">
+                            {game.home_team.abbreviation} vs {game.visitor_team.abbreviation}
+                            <div className="h-[4px] w-[4px] bg-[#878787] rounded-full mx-[5px]" />
+                            {formatTime(game.date)}
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
 
-                    {/* SPREAD (placeholder for now) */}
-                    <TableCell>{game.spread}</TableCell>
+                      {/* SPREAD (placeholder for now) */}
+                      <TableCell>{game.spread}</TableCell>
 
-                    {/* TOTAL (placeholder) */}
-                    <TableCell>{game.total}</TableCell>
+                      {/* TOTAL (placeholder) */}
+                      <TableCell>{game.total}</TableCell>
 
-                    {/* WIN PROBABILITY (placeholder bar) */}
-                    <TableCell className="w-[20vw]">
-                      <div className="flex items-center">
-                        <div className=' mr-[3px]'>
-                          <p>{game.home_team.abbreviation}</p>
-                          <h1 className=' font-semibold'>{Math.round(game.win_probability * 100)}%</h1>
+                      {/* WIN PROBABILITY (placeholder bar) */}
+                      <TableCell className="w-[20vw]">
+                        <div className="flex items-center">
+                          <div className=' mr-[3px]'>
+                            <p>{game.home_team.abbreviation}</p>
+                            <h1 className=' font-semibold'>{Math.round(game.win_probability * 100)}%</h1>
+                          </div>
+                          <div className="w-[15vw] h-[8px] bg-[#DADDE1] rounded-full mr-3">
+                            <div style={{ width: `${Math.round(game.win_probability * 100)}%` }} className={`h-full bg-[#2FC337] rounded-full`} />
+                          </div>
+                          <div className=' mr-[3px]'>
+                            <p>{game.visitor_team.abbreviation}</p>
+                            <h1 className=' font-semibold'>{100 - Math.round(game.win_probability * 100)}%</h1>
+                          </div>
                         </div>
-                        <div className="w-[15vw] h-[8px] bg-[#DADDE1] rounded-full mr-3">
-                          <div style={{ width: `${Math.round(game.win_probability * 100)}%` }} className={`h-full bg-[#2FC337] rounded-full`} />
-                        </div>
-                        <div className=' mr-[3px]'>
-                          <p>{game.visitor_team.abbreviation}</p>
-                          <h1 className=' font-semibold'>{100 - Math.round(game.win_probability * 100)}%</h1>
-                        </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
 
-                    {/* EDGE */}
-                    <TableCell className="text-right">{game.edge}</TableCell>
+                      {/* EDGE */}
+                      <TableCell className="text-right">{game.edge}</TableCell>
 
-                    {/* STATUS */}
-                    {/* <TableCell className="text-right">
+                      {/* STATUS */}
+                      {/* <TableCell className="text-right">
                                             <div className={`inline-flex px-3 py-1 border rounded-md ${formatStatus(game.status) === "Upcoming" && "bg-[#4753671A] text-black border-[#E4E7EC]"}`}>
                                                 {formatStatus(game.status)}
                                             </div>
                                         </TableCell> */}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
-        </div>
+        </FadeInFromLeft>
 
         {/* <div className=" w-full">
           <h1 className=" text-[18px] font-semibold mb-[8px]">Model Performance</h1>
@@ -603,9 +611,11 @@ const page = () => {
 
         <div className=" w-full">
           <h1 className=" text-[18px] font-semibold mb-[8px]">Totals Chart</h1>
-          <div className=" w-full h-[65vh] bg-[#FFFFFF] dark:bg-[#232323] rounded-2xl flex items-center justify-center">
-            <WeeklyTotalsBarChart games={games} />
-          </div>
+          <FadeInFromBottom>
+            <div className=" w-full h-[65vh] bg-[#FFFFFF] dark:bg-[#232323] rounded-2xl flex items-center justify-center">
+              <WeeklyTotalsBarChart games={games} />
+            </div>
+          </FadeInFromBottom>
         </div>
 
         <div className=" w-full">
